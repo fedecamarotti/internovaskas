@@ -3,1017 +3,590 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luján Pías Real Estate</title>
+<title>Registro de Ventas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --black: #0a0a0a;
-    --white: #f5f3ef;
-    --gold: #c9a96e;
-    --mid: #1a1a1a;
-    --font-display: 'Cormorant Garamond', serif;
-    --font-body: 'Montserrat', sans-serif;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: var(--font-body);
-    overflow-x: hidden;
-  }
-
-  /* ── NAVBAR ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 28px 48px;
-    gap: 32px;
-  }
-
-  nav a {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 300;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--white);
-    text-decoration: none;
-    transition: color 0.4s ease, opacity 0.2s;
-    opacity: 0.85;
-  }
-
-  nav a:hover { opacity: 1; }
-
-  /* nav light mode (over white sections) */
-  nav.light-nav a { color: #111; }
-
-  /* ── WHATSAPP FLOTANTE ── */
-  .wa-float {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    z-index: 200;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #6abf7b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
-    transition: transform 0.25s, box-shadow 0.25s;
-    text-decoration: none;
-  }
-
-  .wa-float:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
-  }
-
-  .wa-float svg {
-    width: 28px; height: 28px; fill: #fff;
-  }
-
-  /* ── HERO ── */
-  #hero {
-    position: relative;
-    height: 100vh;
-    height: 100dvh;
-    min-height: 600px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background-image: url('image/fondohome.jpg');
-    background-size: cover;
-    background-position: center;
-    transform: scale(1.04);
-    transition: transform 8s ease;
-  }
-
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 70% 60% at 50% 50%, rgba(8,8,8,0.45) 0%, rgba(8,8,8,0.82) 60%, rgba(4,4,4,0.97) 100%);
-  }
-
-  #hero:hover .hero-bg { transform: scale(1); }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 0 24px;
-    animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) both;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 0 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) both;
-  }
-
-  .hero-logo {
-    display: block;
-    width: auto;
-    max-width: 100%;
-    margin: 0 auto 18px;
-    opacity: 0.95;
-  }
-
-  .hero-name {
-    font-family: var(--font-body);
-    letter-spacing: 0.32em;
-    line-height: 1.45;
-    color: var(--white);
-    text-transform: uppercase;
-    opacity: 0.85;
-    text-align: center;
-  }
-
-  .hero-name .line1 {
-    display: block;
-    font-size: clamp(1rem, 2vw, 1.35rem);
-    font-weight: 300;
-  }
-
-  .hero-name .line2 {
-    display: block;
-    font-size: clamp(0.8rem, 1.4vw, 1rem);
-    font-weight: 300;
-    letter-spacing: 0.22em;
-    opacity: 0.7;
-  }
-
-  /* ── SCROLL CTA ── */
-  .scroll-cta {
-    position: absolute;
-    bottom: 48px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--white);
-    opacity: 0.6;
-    transition: opacity 0.3s;
-    animation: fadeUp 1.8s cubic-bezier(0.16,1,0.3,1) 0.4s both;
-    white-space: nowrap;
-  }
-
-  .scroll-cta:hover { opacity: 1; }
-
-  .scroll-cta span {
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 300;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-  }
-
-  .arrow-circle {
-    width: 36px;
-    height: 36px;
-    border: 1px solid rgba(255,255,255,0.35);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: bounce 2.2s ease-in-out infinite;
-  }
-
-  .arrow-circle svg {
-    width: 14px;
-    height: 14px;
-    stroke: var(--white);
-    stroke-width: 1.5;
-    fill: none;
-  }
-
-  /* ── BLOQUE 2: CONOCENOS ── */
-  #conocenos {
-    background: var(--white);
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 80px;
-    gap: 64px;
-    min-height: 100vh;
-  }
-
-  .conocenos-foto {
-    flex-shrink: 0;
-    width: 280px;
-    height: 380px;
-    overflow: hidden;
-  }
-
-  .conocenos-foto img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-  }
-
-  .conocenos-texto {
-    max-width: 480px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .conocenos-eyebrow {
-    display: block;
-    width: 28px;
-    height: 1px;
-    background: var(--gold);
-    margin-bottom: 32px;
-  }
-
-  .conocenos-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 4vw, 3.8rem);
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #111;
-    line-height: 1.1;
-    margin-bottom: 32px;
-  }
-
-  .conocenos-title em {
-    font-style: normal;
-    color: var(--gold);
-  }
-
-  .conocenos-body {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    line-height: 2;
-    color: #555;
-  }
-
-  .conocenos-body p + p {
-    margin-top: 20px;
-  }
-
-  @media (max-width: 700px) {
-    #conocenos { flex-direction: column; padding: 60px 28px; gap: 36px; }
-    .conocenos-foto { width: 100%; height: 260px; }
-  }
-
-  /* ── PROYECTOS HEADER ── */
-  #proyectos-header {
-    height: 100vh;
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 48px;
-    position: relative;
-    background: radial-gradient(ellipse 80% 60% at 50% 50%, #1e1e1e 0%, #0a0a0a 100%);
-    gap: 0;
-  }
-
-  #proyectos-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    opacity: 0.3;
-  }
-
-  .proyectos-title {
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 3vw, 2.8rem);
-    font-weight: 300;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--white);
-    line-height: 1;
-    margin-bottom: 36px;
-  }
-
-  .proyectos-title em {
-    font-style: normal;
-    color: var(--gold);
-  }
-
-  .proyectos-sub {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 300;
-    letter-spacing: 0.12em;
-    color: rgba(245,243,239,0.55);
-    line-height: 2;
-    max-width: 500px;
-    margin-bottom: 36px;
-  }
-
-  .proyectos-cta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--white);
-    opacity: 0.55;
-    transition: opacity 0.3s;
-  }
-
-  .proyectos-cta:hover { opacity: 1; }
-
-  .proyectos-cta span {
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 300;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-  }
-
-  .proyectos-cta .arrow-circle {
-    animation: bounce 2.2s ease-in-out infinite;
-  }
-
-  /* ── PROYECTO ROW ── */
-  .proyecto-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    height: 580px;
-    position: relative;
-  }
-
-  .proyecto-row::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 6%; right: 6%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,169,110,0.25), transparent);
-  }
-
-  /* dark rows */
-  .proyecto-row.dark {
-    background: radial-gradient(ellipse 120% 100% at 50% 50%, #1c1c1c 0%, #0d0d0d 100%);
-    color: var(--white);
-  }
-
-  /* light rows */
-  .proyecto-row.light {
-    background: radial-gradient(ellipse 120% 100% at 50% 50%, #f9f7f3 0%, #ede9e2 100%);
-    color: #1a1a1a;
-  }
-
-  /* ── CAROUSEL ── */
-  .carousel-wrap {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .carousel-track {
-    display: flex;
-    height: 100%;
-    transition: transform 0.7s cubic-bezier(0.77,0,0.18,1);
-  }
-
-  .carousel-track img {
-    min-width: 100%;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    flex-shrink: 0;
-    display: block;
-  }
-
-  .carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-    transition: background 0.25s;
-  }
-
-  .carousel-btn:hover { background: rgba(0,0,0,0.7); }
-  .carousel-btn.prev { left: 14px; }
-  .carousel-btn.next { right: 14px; }
-
-  .carousel-btn svg {
-    width: 14px; height: 14px;
-    stroke: #fff; stroke-width: 1.8; fill: none;
-  }
-
-  .carousel-dots {
-    position: absolute;
-    bottom: 14px;
-    left: 50%; transform: translateX(-50%);
-    display: flex; gap: 7px; z-index: 5;
-  }
-
-  .carousel-dots span {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-  }
-
-  .carousel-dots span.active {
-    background: var(--gold);
-    transform: scale(1.3);
-  }
-
-  /* ── PROJECT TEXT ── */
-  .proyecto-text {
-    padding: 56px 52px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-    height: 100%;
-    box-sizing: border-box;
-  }
-
-  .proyecto-tag {
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 400;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 18px;
-  }
-
-  .proyecto-nombre {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3.5vw, 3.2rem);
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    line-height: 1;
-    margin-bottom: 10px;
-  }
-
-  .dark .proyecto-nombre { color: var(--white); }
-  .light .proyecto-nombre { color: #111; }
-
-  .proyecto-direccion {
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 300;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 28px;
-  }
-
-  .dark .proyecto-direccion { color: rgba(245,243,239,0.45); }
-  .light .proyecto-direccion { color: #888; }
-
-  .proyecto-divider {
-    width: 32px; height: 1px;
-    background: var(--gold);
-    opacity: 0.6;
-    margin-bottom: 24px;
-  }
-
-  .proyecto-body {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 300;
-    line-height: 1.95;
-    overflow: hidden;
-    position: relative;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .dark .proyecto-body { color: rgba(245,243,239,0.72); }
-  .light .proyecto-body { color: #444; }
-
-  .proyecto-body.clamped::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 48px;
-    pointer-events: none;
-  }
-
-  .dark .proyecto-body.clamped::after {
-    background: linear-gradient(transparent, #111);
-  }
-
-  .light .proyecto-body.clamped::after {
-    background: linear-gradient(transparent, #ede9e2);
-  }
-
-  .ver-mas-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    margin-top: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 400;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    padding: 0;
-    transition: opacity 0.25s;
-  }
-
-  .ver-mas-btn:hover { opacity: 0.7; }
-
-  .ver-mas-btn svg {
-    width: 12px; height: 12px;
-    stroke: var(--gold); stroke-width: 1.8; fill: none;
-    transition: transform 0.3s;
-  }
-
-  .ver-mas-btn:hover svg { transform: translateY(2px); }
-
-  /* ── MODAL ── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(5,5,5,0.88);
-    z-index: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s;
-    padding: 40px 24px;
-    backdrop-filter: blur(4px);
-  }
-
-  .modal-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .modal-box {
-    background: #141414;
-    border: 1px solid rgba(201,169,110,0.18);
-    max-width: 640px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 52px 48px 48px;
-    position: relative;
-    transform: translateY(20px);
-    transition: transform 0.35s;
-    scrollbar-width: thin;
-    scrollbar-color: var(--gold) transparent;
-  }
-
-  .modal-overlay.open .modal-box { transform: translateY(0); }
-
-  .modal-close {
-    position: absolute;
-    top: 20px; right: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: rgba(245,243,239,0.5);
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 300;
-    letter-spacing: 0.2em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.25s;
-  }
-
-  .modal-close:hover { color: var(--white); }
-
-  .modal-close svg {
-    width: 14px; height: 14px;
-    stroke: currentColor; stroke-width: 1.5; fill: none;
-  }
-
-  .modal-title {
-    font-family: var(--font-display);
-    font-size: 2.4rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--white);
-    margin-bottom: 6px;
-  }
-
-  .modal-dir {
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 300;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(245,243,239,0.4);
-    margin-bottom: 28px;
-  }
-
-  .modal-divider {
-    width: 32px; height: 1px;
-    background: var(--gold); opacity: 0.5;
-    margin-bottom: 24px;
-  }
-
-  .modal-content {
-    font-family: var(--font-body);
-    font-size: 12.5px;
-    font-weight: 300;
-    line-height: 2;
-    color: rgba(245,243,239,0.72);
-  }
-
-  /* ── KEYFRAMES ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(7px); }
-  }
-
-  /* ── MOBILE ── */
-  @media (max-width: 700px) {
-    nav { padding: 20px 24px; }
-    #hero {
-      height: 100dvh;
-      min-height: 100svh;
-    }
-    .scroll-cta { bottom: 24px; }
-    #conocenos { padding: 80px 24px; }
-    #proyectos-header { padding: 70px 24px 48px; }
-    .proyecto-row { height: 320px; }
-    .proyecto-text { padding: 24px 20px; }
-    .modal-box { padding: 40px 24px 32px; }
-  }
+:root{
+  --bg:#121014;
+  --surface:#1b181d;
+  --surface-2:#221f25;
+  --line:#332e35;
+  --text:#ede7e0;
+  --muted:#948c95;
+  --accent:#a8394a;
+  --accent-soft:#3a2027;
+  --belgrano:#6f9377;
+  --belgrano-bg:#1f2b22;
+  --cc:#5b83a3;
+  --cc-bg:#1c2731;
+  --salda:#c39355;
+  --salda-bg:#2c2419;
+  --debt:#c25c5c;
+  --paid:#7ea583;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+h1,h2,h3,.brand{font-family:'Fraunces',serif;}
+
+header{
+  position:sticky;top:0;z-index:20;
+  background:rgba(18,16,20,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 22px;
+}
+.brand{font-size:19px;font-weight:600;letter-spacing:.3px;font-style:italic;}
+.brand span{color:var(--accent);}
+nav{display:flex;gap:6px;}
+nav button{
+  background:none;border:none;color:var(--muted);font-family:'Inter';font-size:13.5px;font-weight:600;
+  padding:9px 15px;border-radius:8px;cursor:pointer;letter-spacing:.2px;transition:.15s;
+}
+nav button:hover{color:var(--text);background:var(--surface-2);}
+nav button.active{color:var(--text);background:var(--accent-soft);}
+
+main{padding:26px 22px 100px;max-width:1500px;margin:0 auto;}
+.view{display:none;}
+.view.active{display:block;}
+.view-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.view-head h1{font-size:26px;font-weight:600;font-style:italic;margin:0;}
+.view-head .count{color:var(--muted);font-size:13px;}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);}
+table{border-collapse:collapse;width:100%;min-width:1180px;font-size:13px;}
+thead th{
+  text-align:left;padding:11px 12px;background:var(--surface-2);color:var(--muted);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;
+  border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;
+}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap;}
+tbody td.wrap{white-space:normal;min-width:200px;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,.015);}
+.cliente-name{font-weight:600;}
+.cod{color:var(--muted);font-variant-numeric:tabular-nums;}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.belgrano{background:var(--belgrano-bg);color:var(--belgrano);}
+.badge.cc{background:var(--cc-bg);color:var(--cc);}
+.badge.salda{background:var(--salda-bg);color:var(--salda);}
+.money{font-variant-numeric:tabular-nums;}
+.muted{color:var(--muted);}
+.debe-cell{cursor:pointer;font-weight:700;color:var(--debt);border-radius:6px;padding:4px 8px;transition:.15s;}
+.debe-cell:hover{background:rgba(194,92,92,.12);}
+.debe-cell.paid{color:var(--paid);cursor:default;font-weight:600;}
+.debe-cell.paid:hover{background:none;}
+.empty-state{padding:60px 20px;text-align:center;color:var(--muted);}
+.empty-state .big{font-family:'Fraunces';font-style:italic;font-size:20px;color:var(--text);margin-bottom:6px;}
+
+/* deudas view */
+.deuda-card{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:14px 18px;margin-bottom:8px;
+}
+.deuda-card .left{display:flex;flex-direction:column;gap:3px;}
+.deuda-card .left .name{font-weight:600;font-size:15px;}
+.deuda-card .left .date{font-size:12px;color:var(--muted);}
+.deuda-card .amount{font-weight:700;color:var(--debt);font-size:16px;font-variant-numeric:tabular-nums;}
+
+/* fab */
+.fab{
+  position:fixed;right:26px;bottom:26px;width:58px;height:58px;border-radius:50%;
+  background:var(--accent);color:#fff;border:none;font-size:28px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 26px rgba(168,57,74,.45);z-index:30;transition:.2s;
+  font-family:'Fraunces';font-weight:500;
+}
+.fab:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(168,57,74,.6);}
+
+/* modal */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(10,9,11,.72);backdrop-filter:blur(3px);
+  z-index:50;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;
+}
+.overlay.active{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  width:100%;max-width:640px;padding:26px 26px 22px;
+}
+.modal h2{font-size:21px;font-weight:600;font-style:italic;margin:0 0 4px;}
+.modal .sub{color:var(--muted);font-size:12.5px;margin-bottom:20px;}
+.field-group{margin-bottom:16px;}
+.field-row{display:flex;gap:12px;}
+.field-row .field{flex:1;}
+label{display:block;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:6px;}
+input,select{
+  width:100%;background:var(--surface-2);border:1px solid var(--line);color:var(--text);
+  padding:10px 12px;border-radius:8px;font-size:14px;font-family:'Inter';outline:none;transition:.15s;
+}
+input:focus,select:focus{border-color:var(--accent);}
+input::placeholder{color:#5c5560;}
+.section-label{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:center;}
+.line-item{
+  display:grid;grid-template-columns:2fr 0.7fr 1fr auto auto;gap:8px;margin-bottom:8px;align-items:end;
+}
+.line-item.pago{grid-template-columns:1.4fr 1fr auto;}
+.mini-label{font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
+.icon-btn{
+  background:var(--surface-2);border:1px solid var(--line);color:var(--muted);width:36px;height:36px;
+  border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--accent);}
+.add-line{
+  background:none;border:1px dashed var(--line);color:var(--muted);padding:8px 14px;border-radius:8px;
+  cursor:pointer;font-size:12.5px;font-weight:600;width:100%;margin-top:2px;
+}
+.add-line:hover{border-color:var(--accent);color:var(--accent);}
+.modal-actions{display:flex;gap:10px;margin-top:24px;}
+.btn{
+  padding:11px 20px;border-radius:9px;border:none;font-weight:700;font-size:13.5px;cursor:pointer;
+  font-family:'Inter';letter-spacing:.2px;
+}
+.btn-primary{background:var(--accent);color:#fff;flex:1;}
+.btn-primary:hover{background:#b8455a;}
+.btn-ghost{background:var(--surface-2);color:var(--muted);border:1px solid var(--line);}
+.btn-ghost:hover{color:var(--text);}
+.totals-preview{
+  background:var(--surface-2);border-radius:10px;padding:12px 16px;margin-top:14px;
+  display:flex;justify-content:space-between;font-size:13px;flex-wrap:wrap;gap:8px;
+}
+.totals-preview b{color:var(--text);}
+
+/* debe popover */
+.pop-overlay{display:none;position:fixed;inset:0;z-index:60;align-items:center;justify-content:center;background:rgba(10,9,11,.6);}
+.pop-overlay.active{display:flex;}
+.pop{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;width:280px;}
+.pop h3{margin:0 0 4px;font-size:16px;font-style:italic;}
+.pop .sub{color:var(--muted);font-size:12px;margin-bottom:16px;}
+
+@media(max-width:640px){
+  header{padding:12px 14px;}
+  nav button{padding:8px 10px;font-size:12.5px;}
+  main{padding:18px 12px 100px;}
+  .line-item{grid-template-columns:1fr 1fr;grid-auto-flow:row;}
+  .line-item.pago{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="#conocenos">Conocenos</a>
-  <a href="#proyectos-header">Proyectos</a>
-  <a href="https://wa.me/5491131017901?text=Hola%21%20quisiera%20informaci%C3%B3n" target="_blank">Contacto</a>
-</nav>
+<header>
+  <div class="brand">Registro<span>.</span></div>
+  <nav>
+    <button class="nav-btn active" data-view="ventas">Ventas</button>
+    <button class="nav-btn" data-view="deudas">Deudas</button>
+    <button class="nav-btn" id="navNueva">+ Nueva venta</button>
+  </nav>
+</header>
 
-<!-- WHATSAPP FLOTANTE -->
-<a class="wa-float" href="https://wa.me/5491131017901?text=Hola%21%20quisiera%20informaci%C3%B3n" target="_blank" aria-label="WhatsApp">
-  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 2C8.268 2 2 8.268 2 16c0 2.444.638 4.737 1.752 6.724L2 30l7.52-1.716A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.6a11.56 11.56 0 0 1-5.88-1.604l-.42-.252-4.464 1.02.992-4.34-.276-.444A11.52 11.52 0 0 1 4.4 16C4.4 9.59 9.59 4.4 16 4.4S27.6 9.59 27.6 16 22.41 27.6 16 27.6zm6.32-8.648c-.348-.174-2.06-1.016-2.38-1.132-.32-.116-.552-.174-.784.174-.232.348-.9 1.132-1.104 1.364-.204.232-.406.26-.754.086-.348-.174-1.468-.54-2.796-1.724-1.032-.92-1.728-2.056-1.932-2.404-.204-.348-.022-.536.152-.708.158-.156.348-.406.522-.61.174-.204.232-.348.348-.58.116-.232.058-.436-.028-.61-.088-.174-.784-1.888-1.074-2.588-.284-.68-.572-.588-.784-.6-.204-.01-.436-.012-.668-.012s-.61.086-.928.434c-.32.348-1.218 1.19-1.218 2.9s1.246 3.364 1.42 3.596c.174.232 2.452 3.744 5.944 5.252.832.358 1.48.572 1.984.732.834.264 1.594.226 2.194.138.668-.1 2.06-.842 2.35-1.656.29-.814.29-1.512.204-1.656-.086-.144-.32-.232-.668-.406z"/>
-  </svg>
-</a>
+<main>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <img src="image/lplogoblanco.png" alt="Luján Pías Real Estate" class="hero-logo">
-    <p class="hero-name"><span class="line1">Luján Pías</span><span class="line2">Real Estate</span></p>
-  </div>
-  <a href="#conocenos" class="scroll-cta">
-    <span>Conocé más</span>
-    <div class="arrow-circle">
-      <svg viewBox="0 0 14 14"><polyline points="2,4 7,10 12,4"/></svg>
+  <section id="view-ventas" class="view active">
+    <div class="view-head">
+      <h1>Ventas</h1>
+      <div class="count" id="ventasCount"></div>
     </div>
-  </a>
-</section>
-
-<!-- CONOCENOS -->
-<section id="conocenos">
-  <div class="conocenos-foto">
-    <img src="image/lujan.png" alt="Luján Pías">
-  </div>
-  <div class="conocenos-texto">
-    <span class="conocenos-eyebrow"></span>
-    <h2 class="conocenos-title">Luján Pías<br><em>Real Estate</em></h2>
-    <div class="conocenos-body">
-      <p>Soy Luján Pías, Fundadora y Directora de Luján Pías Real Estate.</p>
-      <p>Años de experiencia en el mundo inmobiliario, la confianza de los mejores Desarrolladores de Buenos Aires y de Clientes fieles, fueron mi motivación para crear esta compañía. Me acompaña un Equipo de profesionales comprometidos en brindar el mejor servicio inmobiliario.</p>
+    <div class="table-wrap">
+      <table id="ventasTable">
+        <thead>
+          <tr>
+            <th>Cód.</th><th>Clienta</th><th>Fecha compra</th><th>Punto de venta</th><th>Fecha evento</th>
+            <th>Producto</th><th>Cant</th><th>Valor unit.</th><th>Total $</th><th>Total usd</th>
+            <th>Efectivo</th><th>Efvo usd</th><th>Transf. BF</th><th>Transf. VF</th><th>Tarjeta</th>
+            <th>DEBE</th><th>DNI</th><th>Fact.</th><th>Cel</th>
+          </tr>
+        </thead>
+        <tbody id="ventasBody"></tbody>
+      </table>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- PROYECTOS HEADER -->
-<section id="proyectos-header">
-  <h2 class="proyectos-title">Nuestros Proyectos</h2>
-  <p class="proyectos-sub">En LP Real Estate trabajamos todos los días para acompañarte a alcanzar tus objetivos inmobiliarios con claridad, confianza y resultados.</p>
-  <a href="#proj-1" class="proyectos-cta">
-    <span>Conocé todos nuestros proyectos</span>
-    <div class="arrow-circle">
-      <svg viewBox="0 0 14 14"><polyline points="2,4 7,10 12,4"/></svg>
+  <section id="view-deudas" class="view">
+    <div class="view-head">
+      <h1>Deudas</h1>
+      <div class="count" id="deudasCount"></div>
     </div>
-  </a>
-</section>
+    <div id="deudasList"></div>
+  </section>
 
-<!-- PROYECTO 1: DONNA FIORE — carousel left, text right -->
-<div class="proyecto-row dark" id="proj-1">
-  <div class="carousel-wrap">
-    <div class="carousel-track">
-      <img src="image/donnafiore01.png" alt="Donna Fiore 1">
-      <img src="image/donnafiore02.png" alt="Donna Fiore 2">
-      <img src="image/donnafiore03.png" alt="Donna Fiore 3">
-    </div>
-    <button class="carousel-btn prev" onclick="slide(this,-1)">
-      <svg viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12"/></svg>
-    </button>
-    <button class="carousel-btn next" onclick="slide(this,1)">
-      <svg viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12"/></svg>
-    </button>
-    <div class="carousel-dots">
-      <span class="active"></span><span></span><span></span>
-    </div>
-  </div>
-  <div class="proyecto-text">
-    <h3 class="proyecto-nombre">Donna Fiore</h3>
-    <p class="proyecto-direccion">Avenida Pedro Goyena 1700, Caballito</p>
-    <div class="proyecto-divider"></div>
-    <div class="proyecto-body" data-full="Donna Fiore es un edificio exclusivo de 13 pisos con amplias unidades de 160 a 370m2.
+</main>
 
-Combina exclusividad, confort, diseño arquitectónico, y arte.
+<button class="fab" id="fabAdd" title="Nueva venta">+</button>
 
-Últimas unidades disponibles 4 y 5 ambientes con dependencias.
+<!-- MODAL NUEVA VENTA -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>Nueva venta</h2>
+    <div class="sub">Cargá los datos de la clienta y el detalle de la compra</div>
+    <form id="ventaForm">
 
-Departamentos con balcones aterrazados, ambientes amplios con cocinas integradas, todos los dormitorios en suite y un área de servicio con lavadero, despensa, habitación y baño.
+      <div class="field-row">
+        <div class="field field-group">
+          <label>Código</label>
+          <input type="text" id="fCod" placeholder="ej: 0701">
+        </div>
+        <div class="field field-group">
+          <label>Fecha de compra</label>
+          <input type="date" id="fFecha" required>
+        </div>
+        <div class="field field-group">
+          <label>Fecha de evento</label>
+          <input type="text" id="fFechaEvento" placeholder="ej: 15/08 o septiembre">
+        </div>
+      </div>
 
-✨ Amenities de lujo:
-· Salón de eventos
-· Rooftop con pileta vidriada
-· Solarium
-· Parrilleros
-· Jardines en altura
-· Gimnasio
-· Spa y sauna
+      <div class="field-group">
+        <label>Nombre de la clienta</label>
+        <input type="text" id="fCliente" required placeholder="Nombre y apellido">
+      </div>
 
-Entrega inmediata."></div>
-    <button class="ver-mas-btn" onclick="openModal(this)">
-      Ver más
-      <svg viewBox="0 0 12 12"><polyline points="2,4 6,9 10,4"/></svg>
-    </button>
-  </div>
-</div>
+      <div class="field-row">
+        <div class="field field-group">
+          <label>DNI</label>
+          <input type="text" id="fDni" placeholder="opcional">
+        </div>
+        <div class="field field-group">
+          <label>Celular</label>
+          <input type="text" id="fCel" placeholder="opcional">
+        </div>
+      </div>
 
-<!-- PROYECTO 2: DONNA VITA — text left, carousel right -->
-<div class="proyecto-row light" id="proj-2">
-  <div class="proyecto-text">
-    <h3 class="proyecto-nombre">Donna Vita</h3>
-    <p class="proyecto-direccion">Riglos 750 & Avenida Directorio 571, Caballito</p>
-    <div class="proyecto-divider"></div>
-    <div class="proyecto-body" data-full="Donna Vita combina arquitectura y entorno de manera equilibrada.
+      <div class="field-row">
+        <div class="field field-group">
+          <label>Punto de venta</label>
+          <select id="fPunto">
+            <option value="Belgrano">Belgrano</option>
+            <option value="CC">CC</option>
+            <option value="Salda Cta Cte">Salda Cta Cte</option>
+          </select>
+        </div>
+        <div class="field field-group">
+          <label>Nº Factura</label>
+          <input type="text" id="fFactura" placeholder="opcional">
+        </div>
+      </div>
 
-Compuesto por dos edificaciones, un quíntuple frente sobre Riglos y un doble frente sobre Av. Directorio, conectados por un gran espacio central al aire libre.
+      <div id="productosSection">
+        <div class="section-label">Productos</div>
+        <div id="productosList"></div>
+        <button type="button" class="add-line" id="addProducto">+ Agregar producto</button>
+      </div>
 
-Las unidades cuentan con ambientes integrados, donde cocina y living se fusionan para potenciar la amplitud, la luz natural y la vida social.
+      <div id="detalleSaldaField" class="field-group" style="display:none;">
+        <label>Detalle</label>
+        <input type="text" id="fDetalleSalda" placeholder="ej: salda deuda de julio">
+      </div>
 
-🌿 Amenities:
-· Piscina adultos
-· Piscina niños
-· Solárium
-· Gimnasio
-· Spa y sauna
-· Parrilleros
-· Coworking
-· Salón de eventos
+      <div class="field-group">
+        <label>Detalle</label>
+        <input type="text" id="fDetalle" placeholder="Notas u observaciones sobre la venta (opcional)">
+      </div>
 
-Últimas unidades disponibles 2, 3 y 4 ambientes.
+      <div class="section-label">Métodos de pago</div>
+      <div id="pagosList"></div>
+      <button type="button" class="add-line" id="addPago">+ Agregar método de pago</button>
 
-Entrega inmediata."></div>
-    <button class="ver-mas-btn" onclick="openModal(this)">
-      Ver más
-      <svg viewBox="0 0 12 12"><polyline points="2,4 6,9 10,4"/></svg>
-    </button>
-  </div>
-  <div class="carousel-wrap">
-    <div class="carousel-track">
-      <img src="image/donnavita01.png" alt="Donna Vita 1">
-      <img src="image/donnavita02.png" alt="Donna Vita 2">
-      <img src="image/donnavita03.png" alt="Donna Vita 3">
-    </div>
-    <button class="carousel-btn prev" onclick="slide(this,-1)">
-      <svg viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12"/></svg>
-    </button>
-    <button class="carousel-btn next" onclick="slide(this,1)">
-      <svg viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12"/></svg>
-    </button>
-    <div class="carousel-dots">
-      <span class="active"></span><span></span><span></span>
-    </div>
+      <div class="totals-preview" id="totalsPreview"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar venta</button>
+      </div>
+    </form>
   </div>
 </div>
 
-<!-- PROYECTO 3: SO RIVERIE — carousel left, text right -->
-<div class="proyecto-row dark" id="proj-3">
-  <div class="carousel-wrap">
-    <div class="carousel-track">
-      <img src="image/soriverie01.png" alt="So Riverie 1">
-      <img src="image/soriverie02.png" alt="So Riverie 2">
-      <img src="image/soriverie03.png" alt="So Riverie 3">
+<!-- POPOVER DEBE -->
+<div class="pop-overlay" id="popOverlay">
+  <div class="pop">
+    <h3 id="popCliente"></h3>
+    <div class="sub" id="popMonto"></div>
+    <div class="field-group">
+      <label>Fecha de pago</label>
+      <input type="date" id="popFecha">
     </div>
-    <button class="carousel-btn prev" onclick="slide(this,-1)">
-      <svg viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12"/></svg>
-    </button>
-    <button class="carousel-btn next" onclick="slide(this,1)">
-      <svg viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12"/></svg>
-    </button>
-    <div class="carousel-dots">
-      <span class="active"></span><span></span><span></span>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-ghost" id="popCancel">Cerrar</button>
+      <button class="btn btn-primary" id="popConfirm">Marcar PAGÓ</button>
     </div>
-  </div>
-  <div class="proyecto-text">
-    <h3 class="proyecto-nombre">So Riverie, Nordelta</h3>
-    <p class="proyecto-direccion">Avenida del Puerto 2035, Nordelta</p>
-    <div class="proyecto-divider"></div>
-    <div class="proyecto-body" data-full="So Riverie es el desembarco de AZCUY en Nordelta.
-
-Son dos edificios de 100 metros de fachada cada uno al agua sobre el Canal Mayor, frente al Barrio El Yatch y a metros del Río Luján.
-
-Unidades 2 | 3 | 4 | 5 ambientes.
-Desde 90 m² hasta 730 m².
-
-Departamentos con jacuzzis, piscinas privadas, jardines y dúplex con quinchos y terrazas.
-
-✨ Amenities de lujo:
-· Servicio de concierge
-· Servicio náutico y de paisajismo
-· Piscina central
-· Salón de fiestas
-· Parrilleros
-· Wine Bar
-· Área gastronómica
-· Espacio de Arte
-· Sala de juegos
-· Playón deportivo
-· Salón Kids
-· Gym station
-· Senda aeróbica
-· Huerta
-
-Forma de pago: 30% de anticipo y cuotas fijas en dólares hasta la posesión.
-
-Entrega 2028.
-
-Una combinación de arquitectura, paisaje y arte genera una conexión con el entorno, integrando sostenibilidad y calidad en cada detalle.
-
-Su proximidad a la Bahía Grande y al Centro Comercial Nordelta ofrece acceso a gastronomía, tiendas, servicios y opciones recreativas."></div>
-    <button class="ver-mas-btn" onclick="openModal(this)">
-      Ver más
-      <svg viewBox="0 0 12 12"><polyline points="2,4 6,9 10,4"/></svg>
-    </button>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">
-      CERRAR
-      <svg viewBox="0 0 14 14"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>
-    </button>
-    <h3 class="modal-title" id="modal-title"></h3>
-    <p class="modal-dir" id="modal-dir"></p>
-    <div class="modal-divider"></div>
-    <div class="modal-content" id="modal-content"></div>
+    <button class="btn btn-ghost" id="popRevert" style="width:100%;margin-top:8px;display:none;">Revertir a pendiente</button>
   </div>
 </div>
 
 <script>
-// ── CAROUSEL ──
-function slide(btn, dir) {
-  const wrap = btn.closest('.carousel-wrap');
-  const track = wrap.querySelector('.carousel-track');
-  const imgs = track.querySelectorAll('img');
-  const dots = wrap.querySelectorAll('.carousel-dots span');
-  let cur = parseInt(track.dataset.cur || 0);
-  cur = (cur + dir + imgs.length) % imgs.length;
-  track.dataset.cur = cur;
-  track.style.transform = `translateX(-${cur * 100}%)`;
-  dots.forEach((d,i) => d.classList.toggle('active', i === cur));
-}
+const LS_KEY = 'registroVentasDB_v1';
+let ventas = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+const PAGO_TIPOS = ['Efectivo','Efvo usd','Transf. BF','Transf. VF','Tarjeta'];
+const PAGO_COLS  = {'Efectivo':'Efectivo','Efvo usd':'Efvo usd','Transf. BF':'Transf. BF','Transf. VF':'Transf. VF','Tarjeta':'Tarjeta'};
 
-// dot clicks only — no auto-advance
-document.querySelectorAll('.carousel-wrap').forEach(wrap => {
-  const track = wrap.querySelector('.carousel-track');
-  const dots = wrap.querySelectorAll('.carousel-dots span');
-  dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => {
-      track.dataset.cur = i;
-      track.style.transform = `translateX(-${i * 100}%)`;
-      dots.forEach((d,j) => d.classList.toggle('active', j === i));
-    });
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(ventas)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function fmt(n){ return '$ ' + Math.round(n).toLocaleString('es-AR'); }
+function fmtUsd(n){ return 'usd ' + Math.round(n).toLocaleString('es-AR'); }
+function fmtDate(iso){ if(!iso) return ''; const [y,m,d]=iso.split('-'); return `${d}/${m}`; }
+
+// ---------- NAV ----------
+document.querySelectorAll('.nav-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    if(b.id==='navNueva'){ openModal(); return; }
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+b.dataset.view).classList.add('active');
+    if(b.dataset.view==='deudas') renderDeudas();
   });
 });
+document.getElementById('fabAdd').addEventListener('click', openModal);
 
-// ── NAV COLOR ON SCROLL ──
-function updateNavColor() {
-  const checkY = 40;
-  const lightIds = ['conocenos', 'proj-2'];
-  let isLight = false;
-  lightIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    if (rect.top <= checkY && rect.bottom > checkY) isLight = true;
+// ---------- MODAL ----------
+const overlay = document.getElementById('overlay');
+function openModal(){
+  document.getElementById('ventaForm').reset();
+  document.getElementById('fFecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('productosList').innerHTML='';
+  document.getElementById('pagosList').innerHTML='';
+  addProductoLine();
+  addPagoLine();
+  updateTotalsPreview();
+  togglePuntoFields();
+  overlay.classList.add('active');
+}
+document.getElementById('cancelBtn').addEventListener('click', ()=>overlay.classList.remove('active'));
+overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('active'); });
+document.getElementById('fPunto').addEventListener('change', togglePuntoFields);
+
+function togglePuntoFields(){
+  const isSalda = document.getElementById('fPunto').value === 'Salda Cta Cte';
+  document.getElementById('productosSection').style.display = isSalda ? 'none' : 'block';
+  document.getElementById('detalleSaldaField').style.display = isSalda ? 'block' : 'none';
+}
+
+function addProductoLine(){
+  const wrap = document.createElement('div');
+  wrap.className = 'line-item producto-line';
+  wrap.innerHTML = `
+    <div><div class="mini-label">Producto</div><input type="text" class="p-nombre" placeholder="Descripción"></div>
+    <div><div class="mini-label">Cant</div><input type="number" class="p-cant" value="1" min="1"></div>
+    <div><div class="mini-label">Valor unit.</div><input type="number" class="p-valor" placeholder="0"></div>
+    <div><div class="mini-label">Moneda</div>
+      <select class="p-moneda"><option value="ARS">$</option><option value="USD">usd</option></select>
+    </div>
+    <button type="button" class="icon-btn remove-line">×</button>`;
+  wrap.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', updateTotalsPreview));
+  wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove(); updateTotalsPreview(); });
+  document.getElementById('productosList').appendChild(wrap);
+}
+document.getElementById('addProducto').addEventListener('click', addProductoLine);
+
+function addPagoLine(){
+  const wrap = document.createElement('div');
+  wrap.className = 'line-item pago pago-line';
+  wrap.innerHTML = `
+    <div><div class="mini-label">Método</div>
+      <select class="pg-tipo">${PAGO_TIPOS.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>
+    </div>
+    <div><div class="mini-label">Monto</div><input type="number" class="pg-monto" placeholder="0"></div>
+    <button type="button" class="icon-btn remove-line">×</button>`;
+  wrap.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', updateTotalsPreview));
+  wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove(); updateTotalsPreview(); });
+  document.getElementById('pagosList').appendChild(wrap);
+}
+document.getElementById('addPago').addEventListener('click', addPagoLine);
+
+function readProductos(){
+  return [...document.querySelectorAll('.producto-line')].map(l=>({
+    nombre: l.querySelector('.p-nombre').value.trim(),
+    cant: parseFloat(l.querySelector('.p-cant').value)||0,
+    valor: parseFloat(l.querySelector('.p-valor').value)||0,
+    moneda: l.querySelector('.p-moneda').value
+  })).filter(p=>p.nombre);
+}
+function readPagos(){
+  return [...document.querySelectorAll('.pago-line')].map(l=>({
+    tipo: l.querySelector('.pg-tipo').value,
+    monto: parseFloat(l.querySelector('.pg-monto').value)||0
+  })).filter(p=>p.monto>0);
+}
+
+function computeTotals(productos, pagos){
+  let totalARS=0, totalUSD=0;
+  productos.forEach(p=>{ const sub=p.cant*p.valor; if(p.moneda==='USD') totalUSD+=sub; else totalARS+=sub; });
+  const paid = {}; PAGO_TIPOS.forEach(t=>paid[t]=0);
+  pagos.forEach(p=>{ paid[p.tipo]+=p.monto; });
+  const paidARS = paid['Efectivo']+paid['Transf. BF']+paid['Transf. VF']+paid['Tarjeta'];
+  const paidUSD = paid['Efvo usd'];
+  const debeARS = Math.max(0, Math.round((totalARS-paidARS)*100)/100);
+  const debeUSD = Math.max(0, Math.round((totalUSD-paidUSD)*100)/100);
+  return {totalARS,totalUSD,paid,debeARS,debeUSD};
+}
+
+function updateTotalsPreview(){
+  const isSalda = document.getElementById('fPunto').value === 'Salda Cta Cte';
+  const productos = isSalda ? [] : readProductos();
+  const pagos = readPagos();
+  const t = computeTotals(productos,pagos);
+  let html = '';
+  if(!isSalda){
+    html += `<span>Total: <b>${fmt(t.totalARS)}</b>${t.totalUSD?` / <b>${fmtUsd(t.totalUSD)}</b>`:''}</span>`;
+  }
+  const debeTxt = [t.debeARS>0?fmt(t.debeARS):null, t.debeUSD>0?fmtUsd(t.debeUSD):null].filter(Boolean).join(' + ');
+  html += `<span>Debe: <b>${debeTxt || '—'}</b></span>`;
+  document.getElementById('totalsPreview').innerHTML = html;
+}
+
+// ---------- SUBMIT ----------
+document.getElementById('ventaForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const punto = document.getElementById('fPunto').value;
+  const isSalda = punto === 'Salda Cta Cte';
+  const productos = isSalda
+    ? [{nombre: document.getElementById('fDetalleSalda').value.trim() || 'salda deuda', cant:null, valor:null, moneda:'ARS'}]
+    : readProductos();
+  const pagos = readPagos();
+  const t = computeTotals(isSalda?[]:productos, pagos);
+
+  const fecha = document.getElementById('fFecha').value;
+  const codInput = document.getElementById('fCod').value.trim();
+  const cod = codInput || (isSalda ? '-' : '');
+
+  ventas.push({
+    id: uid(),
+    cod, cliente: document.getElementById('fCliente').value.trim(),
+    fecha, fechaEvento: document.getElementById('fFechaEvento').value.trim(),
+    dni: document.getElementById('fDni').value.trim(),
+    cel: document.getElementById('fCel').value.trim(),
+    factura: document.getElementById('fFactura').value.trim(),
+    detalle: document.getElementById('fDetalle').value.trim(),
+    punto, productos, pagos,
+    totalARS:t.totalARS, totalUSD:t.totalUSD, paid:t.paid,
+    debeARS:t.debeARS, debeUSD:t.debeUSD,
+    pagado:false, fechaPago:null
   });
-  document.querySelector('nav').classList.toggle('light-nav', isLight);
-}
-window.addEventListener('scroll', updateNavColor, { passive: true });
-updateNavColor();
+  save();
+  overlay.classList.remove('active');
+  renderVentas();
+});
 
+// ---------- RENDER VENTAS ----------
+function renderVentas(){
+  const body = document.getElementById('ventasBody');
+  body.innerHTML = '';
+  const sorted = [...ventas].sort((a,b)=> (a.fecha||'').localeCompare(b.fecha||''));
+  document.getElementById('ventasCount').textContent = sorted.length ? `${sorted.length} registros` : '';
 
+  if(!sorted.length){
+    body.innerHTML = `<tr><td colspan="19"><div class="empty-state"><div class="big">Todavía no hay ventas cargadas</div>Tocá el botón + para agregar la primera</div></td></tr>`;
+    return;
+  }
 
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+  sorted.forEach(v=>{
+    const rows = v.productos.length ? v.productos : [{nombre:'',cant:null,valor:null,moneda:'ARS'}];
+    rows.forEach((p,i)=>{
+      const tr = document.createElement('tr');
+      const badgeClass = v.punto==='Belgrano'?'belgrano':v.punto==='CC'?'cc':'salda';
+      let identityCells = '';
+      if(i===0){
+        identityCells = `
+          <td rowspan="${rows.length}" class="cod">${v.cod}</td>
+          <td rowspan="${rows.length}" class="cliente-name">${esc(v.cliente)}</td>
+          <td rowspan="${rows.length}">${fmtDate(v.fecha)}</td>
+          <td rowspan="${rows.length}"><span class="badge ${badgeClass}">${v.punto}</span></td>
+          <td rowspan="${rows.length}">${esc(v.fechaEvento)||''}</td>`;
+      }
+      const prodCells = `
+        <td class="wrap">${esc(p.nombre)}</td>
+        <td>${p.cant??''}</td>
+        <td class="money">${p.valor?fmt(p.valor):''}</td>`;
+      let payCells = '';
+      if(i===0){
+        payCells = `
+          <td rowspan="${rows.length}" class="money">${v.totalARS?fmt(v.totalARS):''}</td>
+          <td rowspan="${rows.length}" class="money">${v.totalUSD?fmtUsd(v.totalUSD):''}</td>
+          <td rowspan="${rows.length}" class="money">${v.paid['Efectivo']?fmt(v.paid['Efectivo']):''}</td>
+          <td rowspan="${rows.length}" class="money">${v.paid['Efvo usd']?fmtUsd(v.paid['Efvo usd']):''}</td>
+          <td rowspan="${rows.length}" class="money">${v.paid['Transf. BF']?fmt(v.paid['Transf. BF']):''}</td>
+          <td rowspan="${rows.length}" class="money">${v.paid['Transf. VF']?fmt(v.paid['Transf. VF']):''}</td>
+          <td rowspan="${rows.length}" class="money">${v.paid['Tarjeta']?fmt(v.paid['Tarjeta']):''}</td>
+          <td rowspan="${rows.length}">${debeCellHtml(v)}</td>
+          <td rowspan="${rows.length}">${esc(v.dni)||''}</td>
+          <td rowspan="${rows.length}">${esc(v.factura)||''}</td>
+          <td rowspan="${rows.length}">${esc(v.cel)||''}</td>`;
+      }
+      tr.innerHTML = identityCells + prodCells + payCells;
+      body.appendChild(tr);
+    });
+  });
 
-function clampTexts() {
-  document.querySelectorAll('.proyecto-row').forEach(row => {
-    const body = row.querySelector('.proyecto-body');
-    const btn = row.querySelector('.ver-mas-btn');
-    if (!body) return;
-
-    const full = body.dataset.full || '';
-    body.innerHTML = escapeHtml(full).replace(/\n/g, '<br>');
-
-    if (body.scrollHeight > body.clientHeight + 4) {
-      body.classList.add('clamped');
-      btn.style.display = 'inline-flex';
-    } else {
-      body.classList.remove('clamped');
-      btn.style.display = 'none';
-    }
+  document.querySelectorAll('.debe-cell[data-id]').forEach(el=>{
+    el.addEventListener('click', ()=> openDebePop(el.dataset.id));
   });
 }
 
-window.addEventListener('load', clampTexts);
-window.addEventListener('resize', clampTexts);
-
-// ── MODAL ──
-function openModal(btn) {
-  const row = btn.closest('.proyecto-row');
-  const nombre = row.querySelector('.proyecto-nombre').textContent;
-  const dir = row.querySelector('.proyecto-direccion').textContent;
-  const full = row.querySelector('.proyecto-body').dataset.full;
-  document.getElementById('modal-title').textContent = nombre;
-  document.getElementById('modal-dir').textContent = dir;
-  document.getElementById('modal-content').innerHTML = escapeHtml(full).replace(/\n/g, '<br>');
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+function debeCellHtml(v){
+  const hasDebt = v.debeARS>0 || v.debeUSD>0;
+  if(v.pagado){
+    return `<div class="debe-cell paid">PAGÓ<br><span class="muted" style="font-weight:400;font-size:11px;">${fmtDate(v.fechaPago)}</span></div>`;
+  }
+  if(!hasDebt) return '';
+  const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join('<br>');
+  return `<div class="debe-cell" data-id="${v.id}">${txt}</div>`;
 }
 
-function closeModal(e) {
-  if (e && e.target !== document.getElementById('modal')) return;
-  document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow = '';
+function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+// ---------- DEBE POPOVER ----------
+let currentDebeId = null;
+function openDebePop(id){
+  const v = ventas.find(x=>x.id===id);
+  if(!v) return;
+  currentDebeId = id;
+  document.getElementById('popCliente').textContent = v.cliente;
+  const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join(' + ');
+  document.getElementById('popMonto').textContent = 'Debe ' + txt;
+  document.getElementById('popFecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('popRevert').style.display = v.pagado ? 'block' : 'none';
+  document.getElementById('popOverlay').classList.add('active');
 }
+document.getElementById('popCancel').addEventListener('click', ()=>document.getElementById('popOverlay').classList.remove('active'));
+document.getElementById('popOverlay').addEventListener('click', e=>{ if(e.target.id==='popOverlay') e.currentTarget.classList.remove('active'); });
+document.getElementById('popConfirm').addEventListener('click', ()=>{
+  const v = ventas.find(x=>x.id===currentDebeId);
+  if(!v) return;
+  v.pagado = true;
+  v.fechaPago = document.getElementById('popFecha').value;
+  save();
+  document.getElementById('popOverlay').classList.remove('active');
+  renderVentas();
+});
+document.getElementById('popRevert').addEventListener('click', ()=>{
+  const v = ventas.find(x=>x.id===currentDebeId);
+  if(!v) return;
+  v.pagado = false; v.fechaPago = null;
+  save();
+  document.getElementById('popOverlay').classList.remove('active');
+  renderVentas();
+});
+
+// ---------- RENDER DEUDAS ----------
+function renderDeudas(){
+  const list = document.getElementById('deudasList');
+  const pendientes = ventas.filter(v=> !v.pagado && (v.debeARS>0 || v.debeUSD>0));
+  document.getElementById('deudasCount').textContent = pendientes.length ? `${pendientes.length} clientas con saldo pendiente` : '';
+  if(!pendientes.length){
+    list.innerHTML = `<div class="empty-state"><div class="big">No hay deudas pendientes</div>Todas las clientas están al día</div>`;
+    return;
+  }
+  list.innerHTML = pendientes.map(v=>{
+    const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join(' + ');
+    return `<div class="deuda-card">
+      <div class="left"><div class="name">${esc(v.cliente)}</div><div class="date">Compra del ${fmtDate(v.fecha)}</div></div>
+      <div class="amount">${txt}</div>
+    </div>`;
+  }).join('');
+}
+
+renderVentas();
 </script>
+</body>
+</html>
