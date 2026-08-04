@@ -8,22 +8,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#121014;
-  --surface:#1b181d;
-  --surface-2:#221f25;
-  --line:#332e35;
-  --text:#ede7e0;
-  --muted:#948c95;
-  --accent:#a8394a;
-  --accent-soft:#3a2027;
-  --belgrano:#6f9377;
-  --belgrano-bg:#1f2b22;
-  --cc:#5b83a3;
-  --cc-bg:#1c2731;
-  --salda:#c39355;
-  --salda-bg:#2c2419;
-  --debt:#c25c5c;
-  --paid:#7ea583;
+  --bg:#efece4;
+  --surface:#f8f6f0;
+  --surface-2:#e6e2d6;
+  --pay-tint:#ece7d8;
+  --line:#d8d2c2;
+  --text:#211f1a;
+  --muted:#7a7468;
+  --accent:#8f3244;
+  --accent-soft:#f0dade;
+  --belgrano:#4f7a56;
+  --belgrano-bg:#dde8dd;
+  --cc:#3f6688;
+  --cc-bg:#dbe6ee;
+  --salda:#93672c;
+  --salda-bg:#efe1c6;
+  --debt:#a13f3a;
+  --paid:#4f7a56;
 }
 *{box-sizing:border-box;}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
@@ -31,7 +32,7 @@ h1,h2,h3,.brand{font-family:'Fraunces',serif;}
 
 header{
   position:sticky;top:0;z-index:20;
-  background:rgba(18,16,20,.92);backdrop-filter:blur(10px);
+  background:rgba(239,236,228,.92);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 22px;
@@ -56,26 +57,46 @@ main{padding:26px 22px 100px;max-width:1500px;margin:0 auto;}
 .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);}
 table{border-collapse:collapse;width:100%;min-width:1180px;font-size:13px;}
 thead th{
-  text-align:left;padding:11px 12px;background:var(--surface-2);color:var(--muted);
-  font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;
-  border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;
+  text-align:center;padding:9px 6px;background:var(--surface-2);color:var(--muted);
+  font-size:10px;text-transform:uppercase;letter-spacing:.4px;font-weight:700;
+  border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;line-height:1.35;
 }
-tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap;}
-tbody td.wrap{white-space:normal;min-width:200px;}
+thead th.pay-col{background:var(--pay-tint);}
+thead th.pay-start{border-left:2px solid var(--line);}
+thead th.pay-end{border-right:2px solid var(--line);}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap;}
+tbody td.wrap{white-space:normal;min-width:190px;}
+tbody td.pay-col{background:var(--pay-tint);}
+tbody td.pay-start{border-left:2px solid var(--line);}
+tbody td.pay-end{border-right:2px solid var(--line);}
 tbody tr:last-child td{border-bottom:none;}
-tbody tr:hover{background:rgba(255,255,255,.015);}
+tbody tr:hover{background:rgba(0,0,0,.025);}
 .cliente-name{font-weight:600;}
+.cod-cell{display:flex;align-items:center;gap:5px;}
+.edit-btn{
+  background:none;border:1px solid var(--line);color:var(--muted);width:20px;height:20px;min-width:20px;
+  border-radius:5px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0;
+}
+.edit-btn:hover{color:var(--accent);border-color:var(--accent);}
 .cod{color:var(--muted);font-variant-numeric:tabular-nums;}
 .badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap;}
 .badge.belgrano{background:var(--belgrano-bg);color:var(--belgrano);}
 .badge.cc{background:var(--cc-bg);color:var(--cc);}
 .badge.salda{background:var(--salda-bg);color:var(--salda);}
 .money{font-variant-numeric:tabular-nums;}
+.money.total-bold{font-weight:700;}
 .muted{color:var(--muted);}
 .debe-cell{cursor:pointer;font-weight:700;color:var(--debt);border-radius:6px;padding:4px 8px;transition:.15s;}
-.debe-cell:hover{background:rgba(194,92,92,.12);}
-.debe-cell.paid{color:var(--paid);cursor:default;font-weight:600;}
-.debe-cell.paid:hover{background:none;}
+.debe-cell:hover{background:rgba(161,63,58,.12);}
+.debe-cell.paid{color:var(--paid);cursor:pointer;font-weight:600;}
+.debe-log{font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.fact-btn{
+  background:none;border:1px dashed var(--line);color:var(--muted);width:24px;height:24px;
+  border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
+}
+.fact-btn:hover{border-color:var(--accent);color:var(--accent);}
+.fact-val{cursor:pointer;border-bottom:1px dotted var(--muted);}
+.fact-val:hover{color:var(--accent);}
 .empty-state{padding:60px 20px;text-align:center;color:var(--muted);}
 .empty-state .big{font-family:'Fraunces';font-style:italic;font-size:20px;color:var(--text);margin-bottom:6px;}
 
@@ -95,10 +116,10 @@ tbody tr:hover{background:rgba(255,255,255,.015);}
   position:fixed;right:26px;bottom:26px;width:58px;height:58px;border-radius:50%;
   background:var(--accent);color:#fff;border:none;font-size:28px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 26px rgba(168,57,74,.45);z-index:30;transition:.2s;
+  box-shadow:0 8px 26px rgba(143,50,68,.35);z-index:30;transition:.2s;
   font-family:'Fraunces';font-weight:500;
 }
-.fab:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(168,57,74,.6);}
+.fab:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(143,50,68,.48);}
 
 /* modal */
 .overlay{
@@ -121,7 +142,7 @@ input,select{
   padding:10px 12px;border-radius:8px;font-size:14px;font-family:'Inter';outline:none;transition:.15s;
 }
 input:focus,select:focus{border-color:var(--accent);}
-input::placeholder{color:#5c5560;}
+input::placeholder{color:#a8a196;}
 .section-label{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:center;}
 .line-item{
   display:grid;grid-template-columns:2fr 0.7fr 1fr auto auto;gap:8px;margin-bottom:8px;align-items:end;
@@ -191,10 +212,10 @@ input::placeholder{color:#5c5560;}
       <table id="ventasTable">
         <thead>
           <tr>
-            <th>Cód.</th><th>Clienta</th><th>Fecha compra</th><th>Punto de venta</th><th>Fecha evento</th>
-            <th>Producto</th><th>Cant</th><th>Valor unit.</th><th>Total $</th><th>Total usd</th>
-            <th>Efectivo</th><th>Efvo usd</th><th>Transf. BF</th><th>Transf. VF</th><th>Tarjeta</th>
-            <th>DEBE</th><th>DNI</th><th>Fact.</th><th>Cel</th>
+            <th>Cód.</th><th>Clienta</th><th>Fecha<br>compra</th><th>Punto<br>de venta</th><th>Fecha<br>evento</th>
+            <th>Producto</th><th>Cant</th><th>Valor<br>unit.</th><th>Total<br>$</th><th>Total<br>usd</th>
+            <th class="pay-col pay-start">Efectivo</th><th class="pay-col">Efvo<br>usd</th><th class="pay-col">Transf.<br>BF</th><th class="pay-col">Transf.<br>VF</th><th class="pay-col">Tarjeta</th>
+            <th class="pay-col pay-end">DEBE</th><th>DNI</th><th>Fact.</th><th>Cel</th>
           </tr>
         </thead>
         <tbody id="ventasBody"></tbody>
@@ -252,19 +273,13 @@ input::placeholder{color:#5c5560;}
         </div>
       </div>
 
-      <div class="field-row">
-        <div class="field field-group">
-          <label>Punto de venta</label>
-          <select id="fPunto">
-            <option value="Belgrano">Belgrano</option>
-            <option value="CC">CC</option>
-            <option value="Salda Cta Cte">Salda Cta Cte</option>
-          </select>
-        </div>
-        <div class="field field-group">
-          <label>Nº Factura</label>
-          <input type="text" id="fFactura" placeholder="opcional">
-        </div>
+      <div class="field-group">
+        <label>Punto de venta</label>
+        <select id="fPunto">
+          <option value="Belgrano">Belgrano</option>
+          <option value="CC">CC</option>
+          <option value="Salda Cta Cte">Salda Cta Cte</option>
+        </select>
       </div>
 
       <div id="productosSection">
@@ -302,15 +317,18 @@ input::placeholder{color:#5c5560;}
   <div class="pop">
     <h3 id="popCliente"></h3>
     <div class="sub" id="popMonto"></div>
+    <div id="popLog"></div>
+    <div id="popInputs"></div>
     <div class="field-group">
       <label>Fecha de pago</label>
       <input type="date" id="popFecha">
     </div>
-    <div class="modal-actions" style="margin-top:14px;">
-      <button class="btn btn-ghost" id="popCancel">Cerrar</button>
-      <button class="btn btn-primary" id="popConfirm">Marcar PAGÓ</button>
+    <div class="modal-actions" style="margin-top:6px;">
+      <button type="button" class="btn btn-ghost" id="popCancel">Cerrar</button>
+      <button type="button" class="btn btn-primary" id="popRegistrar">Registrar pago</button>
     </div>
-    <button class="btn btn-ghost" id="popRevert" style="width:100%;margin-top:8px;display:none;">Revertir a pendiente</button>
+    <button type="button" class="btn btn-ghost" id="popConfirm" style="width:100%;margin-top:8px;">Marcar todo como PAGÓ</button>
+    <button type="button" class="btn btn-ghost" id="popRevert" style="width:100%;margin-top:8px;display:none;">Revertir pagos</button>
   </div>
 </div>
 
@@ -341,13 +359,37 @@ document.getElementById('fabAdd').addEventListener('click', openModal);
 
 // ---------- MODAL ----------
 const overlay = document.getElementById('overlay');
-function openModal(){
+let editingId = null;
+function openModal(editId){
+  editingId = editId || null;
+  const v = editingId ? ventas.find(x=>x.id===editingId) : null;
   document.getElementById('ventaForm').reset();
-  document.getElementById('fFecha').value = new Date().toISOString().slice(0,10);
   document.getElementById('productosList').innerHTML='';
   document.getElementById('pagosList').innerHTML='';
-  addProductoLine();
-  addPagoLine();
+  document.querySelector('.modal h2').textContent = v ? 'Editar venta' : 'Nueva venta';
+  document.querySelector('.modal .sub').textContent = v ? 'Modificá los datos de la venta' : 'Cargá los datos de la clienta y el detalle de la compra';
+
+  if(v){
+    document.getElementById('fCod').value = v.cod==='-' ? '' : v.cod;
+    document.getElementById('fFecha').value = v.fecha;
+    document.getElementById('fFechaEvento').value = v.fechaEvento||'';
+    document.getElementById('fCliente').value = v.cliente;
+    document.getElementById('fDni').value = v.dni||'';
+    document.getElementById('fCel').value = v.cel||'';
+    document.getElementById('fPunto').value = v.punto;
+    document.getElementById('fDetalle').value = v.detalle||'';
+    if(v.punto === 'Salda Cta Cte'){
+      document.getElementById('fDetalleSalda').value = (v.productos[0]&&v.productos[0].nombre)||'';
+      addProductoLine();
+    } else {
+      (v.productos.length?v.productos:[null]).forEach(p=>addProductoLine(p));
+    }
+    (v.pagos.length?v.pagos:[null]).forEach(p=>addPagoLine(p));
+  } else {
+    document.getElementById('fFecha').value = new Date().toISOString().slice(0,10);
+    addProductoLine();
+    addPagoLine();
+  }
   updateTotalsPreview();
   togglePuntoFields();
   overlay.classList.add('active');
@@ -362,7 +404,7 @@ function togglePuntoFields(){
   document.getElementById('detalleSaldaField').style.display = isSalda ? 'block' : 'none';
 }
 
-function addProductoLine(){
+function addProductoLine(p){
   const wrap = document.createElement('div');
   wrap.className = 'line-item producto-line';
   wrap.innerHTML = `
@@ -373,13 +415,19 @@ function addProductoLine(){
       <select class="p-moneda"><option value="ARS">$</option><option value="USD">usd</option></select>
     </div>
     <button type="button" class="icon-btn remove-line">×</button>`;
+  if(p){
+    wrap.querySelector('.p-nombre').value = p.nombre||'';
+    wrap.querySelector('.p-cant').value = p.cant||1;
+    wrap.querySelector('.p-valor').value = p.valor||'';
+    wrap.querySelector('.p-moneda').value = p.moneda||'ARS';
+  }
   wrap.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', updateTotalsPreview));
   wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove(); updateTotalsPreview(); });
   document.getElementById('productosList').appendChild(wrap);
 }
-document.getElementById('addProducto').addEventListener('click', addProductoLine);
+document.getElementById('addProducto').addEventListener('click', ()=>addProductoLine());
 
-function addPagoLine(){
+function addPagoLine(p){
   const wrap = document.createElement('div');
   wrap.className = 'line-item pago pago-line';
   wrap.innerHTML = `
@@ -388,11 +436,15 @@ function addPagoLine(){
     </div>
     <div><div class="mini-label">Monto</div><input type="number" class="pg-monto" placeholder="0"></div>
     <button type="button" class="icon-btn remove-line">×</button>`;
+  if(p){
+    wrap.querySelector('.pg-tipo').value = p.tipo||PAGO_TIPOS[0];
+    wrap.querySelector('.pg-monto').value = p.monto||'';
+  }
   wrap.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', updateTotalsPreview));
   wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove(); updateTotalsPreview(); });
   document.getElementById('pagosList').appendChild(wrap);
 }
-document.getElementById('addPago').addEventListener('click', addPagoLine);
+document.getElementById('addPago').addEventListener('click', ()=>addPagoLine());
 
 function readProductos(){
   return [...document.querySelectorAll('.producto-line')].map(l=>({
@@ -450,23 +502,44 @@ document.getElementById('ventaForm').addEventListener('submit', e=>{
   const codInput = document.getElementById('fCod').value.trim();
   const cod = codInput || (isSalda ? '-' : '');
 
-  ventas.push({
-    id: uid(),
+  const common = {
     cod, cliente: document.getElementById('fCliente').value.trim(),
     fecha, fechaEvento: document.getElementById('fFechaEvento').value.trim(),
     dni: document.getElementById('fDni').value.trim(),
     cel: document.getElementById('fCel').value.trim(),
-    factura: document.getElementById('fFactura').value.trim(),
     detalle: document.getElementById('fDetalle').value.trim(),
     punto, productos, pagos,
     totalARS:t.totalARS, totalUSD:t.totalUSD, paid:t.paid,
-    debeARS:t.debeARS, debeUSD:t.debeUSD,
-    pagado:false, fechaPago:null
-  });
+    debeOriginalARS:t.debeARS, debeOriginalUSD:t.debeUSD
+  };
+
+  if(editingId){
+    const v = ventas.find(x=>x.id===editingId);
+    Object.assign(v, common);
+    recomputeDebtFromLog(v);
+  } else {
+    const v = Object.assign({id: uid(), factura:'', pagosDebe:[], pagado:false, fechaPago:null}, common);
+    recomputeDebtFromLog(v);
+    ventas.push(v);
+  }
   save();
   overlay.classList.remove('active');
+  editingId = null;
   renderVentas();
 });
+
+function recomputeDebtFromLog(v){
+  const loggedARS = (v.pagosDebe||[]).reduce((s,p)=>s+(p.ars||0),0);
+  const loggedUSD = (v.pagosDebe||[]).reduce((s,p)=>s+(p.usd||0),0);
+  v.debeARS = Math.max(0, Math.round((v.debeOriginalARS-loggedARS)*100)/100);
+  v.debeUSD = Math.max(0, Math.round((v.debeOriginalUSD-loggedUSD)*100)/100);
+  if(v.debeARS<=0 && v.debeUSD<=0){
+    v.pagado = true;
+    if(!v.fechaPago) v.fechaPago = v.pagosDebe.length ? v.pagosDebe[v.pagosDebe.length-1].fecha : new Date().toISOString().slice(0,10);
+  } else {
+    v.pagado = false;
+  }
+}
 
 // ---------- RENDER VENTAS ----------
 function renderVentas(){
@@ -488,7 +561,7 @@ function renderVentas(){
       let identityCells = '';
       if(i===0){
         identityCells = `
-          <td rowspan="${rows.length}" class="cod">${v.cod}</td>
+          <td rowspan="${rows.length}" class="cod"><div class="cod-cell"><button type="button" class="edit-btn edit-venta" data-id="${v.id}" title="Editar venta">✎</button>${v.cod}</div></td>
           <td rowspan="${rows.length}" class="cliente-name">${esc(v.cliente)}</td>
           <td rowspan="${rows.length}">${fmtDate(v.fecha)}</td>
           <td rowspan="${rows.length}"><span class="badge ${badgeClass}">${v.punto}</span></td>
@@ -501,16 +574,16 @@ function renderVentas(){
       let payCells = '';
       if(i===0){
         payCells = `
-          <td rowspan="${rows.length}" class="money">${v.totalARS?fmt(v.totalARS):''}</td>
+          <td rowspan="${rows.length}" class="money total-bold">${v.totalARS?fmt(v.totalARS):''}</td>
           <td rowspan="${rows.length}" class="money">${v.totalUSD?fmtUsd(v.totalUSD):''}</td>
-          <td rowspan="${rows.length}" class="money">${v.paid['Efectivo']?fmt(v.paid['Efectivo']):''}</td>
-          <td rowspan="${rows.length}" class="money">${v.paid['Efvo usd']?fmtUsd(v.paid['Efvo usd']):''}</td>
-          <td rowspan="${rows.length}" class="money">${v.paid['Transf. BF']?fmt(v.paid['Transf. BF']):''}</td>
-          <td rowspan="${rows.length}" class="money">${v.paid['Transf. VF']?fmt(v.paid['Transf. VF']):''}</td>
-          <td rowspan="${rows.length}" class="money">${v.paid['Tarjeta']?fmt(v.paid['Tarjeta']):''}</td>
-          <td rowspan="${rows.length}">${debeCellHtml(v)}</td>
+          <td rowspan="${rows.length}" class="money pay-col pay-start">${v.paid['Efectivo']?fmt(v.paid['Efectivo']):''}</td>
+          <td rowspan="${rows.length}" class="money pay-col">${v.paid['Efvo usd']?fmtUsd(v.paid['Efvo usd']):''}</td>
+          <td rowspan="${rows.length}" class="money pay-col">${v.paid['Transf. BF']?fmt(v.paid['Transf. BF']):''}</td>
+          <td rowspan="${rows.length}" class="money pay-col">${v.paid['Transf. VF']?fmt(v.paid['Transf. VF']):''}</td>
+          <td rowspan="${rows.length}" class="money pay-col">${v.paid['Tarjeta']?fmt(v.paid['Tarjeta']):''}</td>
+          <td rowspan="${rows.length}" class="pay-col pay-end">${debeCellHtml(v)}</td>
           <td rowspan="${rows.length}">${esc(v.dni)||''}</td>
-          <td rowspan="${rows.length}">${esc(v.factura)||''}</td>
+          <td rowspan="${rows.length}">${factCellHtml(v)}</td>
           <td rowspan="${rows.length}">${esc(v.cel)||''}</td>`;
       }
       tr.innerHTML = identityCells + prodCells + payCells;
@@ -521,16 +594,49 @@ function renderVentas(){
   document.querySelectorAll('.debe-cell[data-id]').forEach(el=>{
     el.addEventListener('click', ()=> openDebePop(el.dataset.id));
   });
+  document.querySelectorAll('.edit-venta').forEach(el=>{
+    el.addEventListener('click', ()=> openModal(el.dataset.id));
+  });
+  document.querySelectorAll('.fact-trigger').forEach(el=>{
+    el.addEventListener('click', ()=> editFactura(el.dataset.id));
+  });
+}
+
+function factCellHtml(v){
+  if(v.factura){
+    return `<span class="fact-val fact-trigger" data-id="${v.id}">${esc(v.factura)}</span>`;
+  }
+  return `<button type="button" class="fact-btn fact-trigger" data-id="${v.id}" title="Agregar factura">+</button>`;
+}
+
+function editFactura(id){
+  const v = ventas.find(x=>x.id===id);
+  if(!v) return;
+  const val = window.prompt('Número de factura', v.factura||'');
+  if(val===null) return;
+  v.factura = val.trim();
+  save();
+  renderVentas();
+}
+
+function logLines(v){
+  return (v.pagosDebe||[]).map(p=>{
+    const txt = [p.ars>0?fmt(p.ars):null, p.usd>0?fmtUsd(p.usd):null].filter(Boolean).join(' + ');
+    return `pagó ${txt} · ${fmtDate(p.fecha)}`;
+  }).join('<br>');
 }
 
 function debeCellHtml(v){
   const hasDebt = v.debeARS>0 || v.debeUSD>0;
+  const hasOriginal = (v.debeOriginalARS>0 || v.debeOriginalUSD>0);
+  if(!hasOriginal) return '';
+  const log = logLines(v);
   if(v.pagado){
-    return `<div class="debe-cell paid">PAGÓ<br><span class="muted" style="font-weight:400;font-size:11px;">${fmtDate(v.fechaPago)}</span></div>`;
+    return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${log?`<div class="debe-log">${log}</div>`:''}</div>`;
   }
   if(!hasDebt) return '';
   const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join('<br>');
-  return `<div class="debe-cell" data-id="${v.id}">${txt}</div>`;
+  return `<div class="debe-cell" data-id="${v.id}">${txt}${log?`<div class="debe-log">${log}</div>`:''}</div>`;
 }
 
 function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
@@ -543,26 +649,63 @@ function openDebePop(id){
   currentDebeId = id;
   document.getElementById('popCliente').textContent = v.cliente;
   const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join(' + ');
-  document.getElementById('popMonto').textContent = 'Debe ' + txt;
+  document.getElementById('popMonto').textContent = v.pagado ? 'Saldado' : ('Debe ' + (txt||'—'));
+  const log = logLines(v);
+  document.getElementById('popLog').innerHTML = log ? `<div class="debe-log" style="margin-bottom:12px;">${log}</div>` : '';
+
+  let inputsHtml = '';
+  if(v.debeARS>0) inputsHtml += `<div class="field-group"><label>Pagó ahora ($)</label><input type="number" id="popPagoArs" placeholder="0"></div>`;
+  if(v.debeUSD>0) inputsHtml += `<div class="field-group"><label>Pagó ahora (usd)</label><input type="number" id="popPagoUsd" placeholder="0"></div>`;
+  document.getElementById('popInputs').innerHTML = inputsHtml;
+
   document.getElementById('popFecha').value = new Date().toISOString().slice(0,10);
-  document.getElementById('popRevert').style.display = v.pagado ? 'block' : 'none';
+  const pendiente = v.debeARS>0 || v.debeUSD>0;
+  document.getElementById('popRegistrar').style.display = pendiente ? 'block' : 'none';
+  document.getElementById('popConfirm').style.display = pendiente ? 'block' : 'none';
+  document.getElementById('popRevert').style.display = (v.pagosDebe && v.pagosDebe.length) ? 'block' : 'none';
   document.getElementById('popOverlay').classList.add('active');
 }
 document.getElementById('popCancel').addEventListener('click', ()=>document.getElementById('popOverlay').classList.remove('active'));
 document.getElementById('popOverlay').addEventListener('click', e=>{ if(e.target.id==='popOverlay') e.currentTarget.classList.remove('active'); });
-document.getElementById('popConfirm').addEventListener('click', ()=>{
+
+document.getElementById('popRegistrar').addEventListener('click', ()=>{
   const v = ventas.find(x=>x.id===currentDebeId);
   if(!v) return;
-  v.pagado = true;
-  v.fechaPago = document.getElementById('popFecha').value;
+  const arsEl = document.getElementById('popPagoArs');
+  const usdEl = document.getElementById('popPagoUsd');
+  const pagoArs = arsEl ? (parseFloat(arsEl.value)||0) : 0;
+  const pagoUsd = usdEl ? (parseFloat(usdEl.value)||0) : 0;
+  if(pagoArs<=0 && pagoUsd<=0){ alert('Ingresá un monto para registrar el pago.'); return; }
+  const fecha = document.getElementById('popFecha').value || new Date().toISOString().slice(0,10);
+  v.pagosDebe = v.pagosDebe || [];
+  v.pagosDebe.push({ars:pagoArs, usd:pagoUsd, fecha});
+  recomputeDebtFromLog(v);
   save();
   document.getElementById('popOverlay').classList.remove('active');
   renderVentas();
 });
+
+document.getElementById('popConfirm').addEventListener('click', ()=>{
+  const v = ventas.find(x=>x.id===currentDebeId);
+  if(!v) return;
+  const fecha = document.getElementById('popFecha').value || new Date().toISOString().slice(0,10);
+  v.pagosDebe = v.pagosDebe || [];
+  if(v.debeARS>0 || v.debeUSD>0){
+    v.pagosDebe.push({ars:v.debeARS, usd:v.debeUSD, fecha});
+  }
+  v.fechaPago = fecha;
+  recomputeDebtFromLog(v);
+  save();
+  document.getElementById('popOverlay').classList.remove('active');
+  renderVentas();
+});
+
 document.getElementById('popRevert').addEventListener('click', ()=>{
   const v = ventas.find(x=>x.id===currentDebeId);
   if(!v) return;
-  v.pagado = false; v.fechaPago = null;
+  v.pagosDebe = [];
+  v.fechaPago = null;
+  recomputeDebtFromLog(v);
   save();
   document.getElementById('popOverlay').classList.remove('active');
   renderVentas();
