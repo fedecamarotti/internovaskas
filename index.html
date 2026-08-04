@@ -61,16 +61,17 @@ thead th{
   font-size:10px;text-transform:uppercase;letter-spacing:.4px;font-weight:700;
   border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;line-height:1.35;
 }
-thead th.pay-col{background:var(--pay-tint);}
-thead th.pay-start{border-left:2px solid var(--line);}
-thead th.pay-end{border-right:2px solid var(--line);}
+thead th.pay-col{background:var(--pay-tint);border-left:1px solid var(--line);}
+thead th.pay-start{border-left:1px solid var(--line);}
+thead th.pay-end{border-right:1px solid var(--line);}
 tbody td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap;}
 tbody td.wrap{white-space:normal;min-width:190px;}
-tbody td.pay-col{background:var(--pay-tint);}
-tbody td.pay-start{border-left:2px solid var(--line);}
-tbody td.pay-end{border-right:2px solid var(--line);}
+tbody td.pay-col{background:var(--pay-tint);border-left:1px solid var(--line);}
+tbody td.pay-start{border-left:1px solid var(--line);}
+tbody td.pay-end{border-right:1px solid var(--line);}
 tbody tr:last-child td{border-bottom:none;}
 tbody tr:hover{background:rgba(0,0,0,.025);}
+.center{text-align:center;}
 .cliente-name{font-weight:600;}
 .cod-cell{display:flex;align-items:center;gap:5px;}
 .edit-btn{
@@ -102,13 +103,18 @@ tbody tr:hover{background:rgba(0,0,0,.025);}
 
 /* deudas view */
 .deuda-card{
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;gap:14px;
   background:var(--surface);border:1px solid var(--line);border-radius:10px;
   padding:14px 18px;margin-bottom:8px;
 }
-.deuda-card .left{display:flex;flex-direction:column;gap:3px;}
+.deuda-card .left{display:flex;flex-direction:column;gap:3px;flex:1;}
 .deuda-card .left .name{font-weight:600;font-size:15px;}
 .deuda-card .left .date{font-size:12px;color:var(--muted);}
+.deuda-card .amount-wrap{flex:1;text-align:center;}
+.deuda-card .notes-wrap{flex:1;display:flex;justify-content:flex-end;}
+.deuda-card .notes-wrap input{
+  max-width:230px;font-size:12.5px;padding:8px 10px;background:var(--surface-2);
+}
 .deuda-card .amount{font-weight:700;color:var(--debt);font-size:16px;font-variant-numeric:tabular-nums;}
 
 /* fab */
@@ -214,8 +220,8 @@ input::placeholder{color:#a8a196;}
           <tr>
             <th>Cód.</th><th>Clienta</th><th>Fecha<br>compra</th><th>Punto<br>de venta</th><th>Fecha<br>evento</th>
             <th>Producto</th><th>Cant</th><th>Valor<br>unit.</th><th>Total<br>$</th><th>Total<br>usd</th>
-            <th class="pay-col pay-start">Efectivo</th><th class="pay-col">Efvo<br>usd</th><th class="pay-col">Transf.<br>BF</th><th class="pay-col">Transf.<br>VF</th><th class="pay-col">Tarjeta</th>
-            <th class="pay-col pay-end">DEBE</th><th>DNI</th><th>Fact.</th><th>Cel</th>
+            <th class="pay-col pay-start">EFVO<br>$</th><th class="pay-col">Efvo<br>usd</th><th class="pay-col">Transf.<br>BF</th><th class="pay-col">Transf.<br>VF</th><th class="pay-col">Tarjeta</th>
+            <th class="pay-col">DEBE<br>$</th><th class="pay-col pay-end">DEBE<br>USD</th><th>DNI</th><th>Fact.</th><th>Cel</th>
           </tr>
         </thead>
         <tbody id="ventasBody"></tbody>
@@ -335,6 +341,20 @@ input::placeholder{color:#a8a196;}
 <script>
 const LS_KEY = 'registroVentasDB_v1';
 let ventas = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+// migración: normaliza ventas guardadas con versiones anteriores del esquema de deuda
+ventas.forEach(v=>{
+  if(v.debeOriginalARS===undefined) v.debeOriginalARS = v.debeARS||0;
+  if(v.debeOriginalUSD===undefined) v.debeOriginalUSD = v.debeUSD||0;
+  if(!v.pagosDebe) v.pagosDebe = [];
+  if(v.factura===undefined) v.factura = '';
+  if(v.detalle===undefined) v.detalle = '';
+  if(v.notaDeuda===undefined) v.notaDeuda = '';
+  if(v.pagado && v.pagosDebe.length===0 && (v.debeOriginalARS>0 || v.debeOriginalUSD>0)){
+    v.pagosDebe.push({ars:v.debeOriginalARS, usd:v.debeOriginalUSD, fecha:v.fechaPago||new Date().toISOString().slice(0,10)});
+  }
+});
+ventas.forEach(v=>recomputeDebtFromLog(v));
+localStorage.setItem(LS_KEY, JSON.stringify(ventas));
 const PAGO_TIPOS = ['Efectivo','Efvo usd','Transf. BF','Transf. VF','Tarjeta'];
 const PAGO_COLS  = {'Efectivo':'Efectivo','Efvo usd':'Efvo usd','Transf. BF':'Transf. BF','Transf. VF':'Transf. VF','Tarjeta':'Tarjeta'};
 
@@ -518,7 +538,7 @@ document.getElementById('ventaForm').addEventListener('submit', e=>{
     Object.assign(v, common);
     recomputeDebtFromLog(v);
   } else {
-    const v = Object.assign({id: uid(), factura:'', pagosDebe:[], pagado:false, fechaPago:null}, common);
+    const v = Object.assign({id: uid(), factura:'', notaDeuda:'', pagosDebe:[], pagado:false, fechaPago:null}, common);
     recomputeDebtFromLog(v);
     ventas.push(v);
   }
@@ -549,7 +569,7 @@ function renderVentas(){
   document.getElementById('ventasCount').textContent = sorted.length ? `${sorted.length} registros` : '';
 
   if(!sorted.length){
-    body.innerHTML = `<tr><td colspan="19"><div class="empty-state"><div class="big">Todavía no hay ventas cargadas</div>Tocá el botón + para agregar la primera</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="20"><div class="empty-state"><div class="big">Todavía no hay ventas cargadas</div>Tocá el botón + para agregar la primera</div></td></tr>`;
     return;
   }
 
@@ -564,12 +584,12 @@ function renderVentas(){
           <td rowspan="${rows.length}" class="cod"><div class="cod-cell"><button type="button" class="edit-btn edit-venta" data-id="${v.id}" title="Editar venta">✎</button>${v.cod}</div></td>
           <td rowspan="${rows.length}" class="cliente-name">${esc(v.cliente)}</td>
           <td rowspan="${rows.length}">${fmtDate(v.fecha)}</td>
-          <td rowspan="${rows.length}"><span class="badge ${badgeClass}">${v.punto}</span></td>
-          <td rowspan="${rows.length}">${esc(v.fechaEvento)||''}</td>`;
+          <td rowspan="${rows.length}" class="center"><span class="badge ${badgeClass}">${v.punto}</span></td>
+          <td rowspan="${rows.length}" class="center">${esc(v.fechaEvento)||''}</td>`;
       }
       const prodCells = `
         <td class="wrap">${esc(p.nombre)}</td>
-        <td>${p.cant??''}</td>
+        <td class="center">${p.cant??''}</td>
         <td class="money">${p.valor?fmt(p.valor):''}</td>`;
       let payCells = '';
       if(i===0){
@@ -581,10 +601,11 @@ function renderVentas(){
           <td rowspan="${rows.length}" class="money pay-col">${v.paid['Transf. BF']?fmt(v.paid['Transf. BF']):''}</td>
           <td rowspan="${rows.length}" class="money pay-col">${v.paid['Transf. VF']?fmt(v.paid['Transf. VF']):''}</td>
           <td rowspan="${rows.length}" class="money pay-col">${v.paid['Tarjeta']?fmt(v.paid['Tarjeta']):''}</td>
-          <td rowspan="${rows.length}" class="pay-col pay-end">${debeCellHtml(v)}</td>
-          <td rowspan="${rows.length}">${esc(v.dni)||''}</td>
-          <td rowspan="${rows.length}">${factCellHtml(v)}</td>
-          <td rowspan="${rows.length}">${esc(v.cel)||''}</td>`;
+          <td rowspan="${rows.length}" class="pay-col">${debeCellHtml(v,'ARS')}</td>
+          <td rowspan="${rows.length}" class="pay-col pay-end">${debeCellHtml(v,'USD')}</td>
+          <td rowspan="${rows.length}" class="center">${esc(v.dni)||''}</td>
+          <td rowspan="${rows.length}" class="center">${factCellHtml(v)}</td>
+          <td rowspan="${rows.length}" class="center">${esc(v.cel)||''}</td>`;
       }
       tr.innerHTML = identityCells + prodCells + payCells;
       body.appendChild(tr);
@@ -619,24 +640,23 @@ function editFactura(id){
   renderVentas();
 }
 
-function logLines(v){
-  return (v.pagosDebe||[]).map(p=>{
-    const txt = [p.ars>0?fmt(p.ars):null, p.usd>0?fmtUsd(p.usd):null].filter(Boolean).join(' + ');
-    return `pagó ${txt} · ${fmtDate(p.fecha)}`;
+function logLines(v, currency){
+  return (v.pagosDebe||[]).filter(p => currency==='USD' ? p.usd>0 : p.ars>0).map(p=>{
+    const amt = currency==='USD' ? fmtUsd(p.usd) : fmt(p.ars);
+    return `pagó ${amt} · ${fmtDate(p.fecha)}`;
   }).join('<br>');
 }
 
-function debeCellHtml(v){
-  const hasDebt = v.debeARS>0 || v.debeUSD>0;
-  const hasOriginal = (v.debeOriginalARS>0 || v.debeOriginalUSD>0);
-  if(!hasOriginal) return '';
-  const log = logLines(v);
-  if(v.pagado){
+function debeCellHtml(v, currency){
+  const original = currency==='USD' ? v.debeOriginalUSD : v.debeOriginalARS;
+  if(!(original>0)) return '';
+  const remaining = currency==='USD' ? v.debeUSD : v.debeARS;
+  const formatter = currency==='USD' ? fmtUsd : fmt;
+  const log = logLines(v, currency);
+  if(remaining<=0){
     return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${log?`<div class="debe-log">${log}</div>`:''}</div>`;
   }
-  if(!hasDebt) return '';
-  const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join('<br>');
-  return `<div class="debe-cell" data-id="${v.id}">${txt}${log?`<div class="debe-log">${log}</div>`:''}</div>`;
+  return `<div class="debe-cell" data-id="${v.id}">${formatter(remaining)}${log?`<div class="debe-log">${log}</div>`:''}</div>`;
 }
 
 function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
@@ -650,7 +670,9 @@ function openDebePop(id){
   document.getElementById('popCliente').textContent = v.cliente;
   const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join(' + ');
   document.getElementById('popMonto').textContent = v.pagado ? 'Saldado' : ('Debe ' + (txt||'—'));
-  const log = logLines(v);
+  const logArs = logLines(v,'ARS');
+  const logUsd = logLines(v,'USD');
+  const log = [logArs, logUsd].filter(Boolean).join('<br>');
   document.getElementById('popLog').innerHTML = log ? `<div class="debe-log" style="margin-bottom:12px;">${log}</div>` : '';
 
   let inputsHtml = '';
@@ -724,9 +746,18 @@ function renderDeudas(){
     const txt = [v.debeARS>0?fmt(v.debeARS):null, v.debeUSD>0?fmtUsd(v.debeUSD):null].filter(Boolean).join(' + ');
     return `<div class="deuda-card">
       <div class="left"><div class="name">${esc(v.cliente)}</div><div class="date">Compra del ${fmtDate(v.fecha)}</div></div>
-      <div class="amount">${txt}</div>
+      <div class="amount-wrap"><span class="amount">${txt}</span></div>
+      <div class="notes-wrap"><input type="text" class="nota-deuda" data-id="${v.id}" placeholder="Agregar nota..." value="${esc(v.notaDeuda)}"></div>
     </div>`;
   }).join('');
+  document.querySelectorAll('.nota-deuda').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const v = ventas.find(x=>x.id===el.dataset.id);
+      if(!v) return;
+      v.notaDeuda = el.value.trim();
+      save();
+    });
+  });
 }
 
 renderVentas();
