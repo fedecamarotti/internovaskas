@@ -9,6 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
 --bg:#efece4;
@@ -32,7 +33,6 @@
 *{box-sizing:border-box;}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
 h1,h2,h3,.brand{font-family:'Fraunces',serif;}
-
 header{
 position:sticky;top:0;z-index:20;
 background:rgba(239,236,228,.92);backdrop-filter:blur(10px);
@@ -72,14 +72,12 @@ padding:9px 15px;border-radius:8px;cursor:pointer;letter-spacing:.2px;transition
 }
 nav button:hover{color:var(--text);background:var(--surface-2);}
 nav button.active{color:var(--text);background:var(--accent-soft);}
-
 main{padding:26px 22px 100px;max-width:1500px;margin:0 auto;}
 .view{display:none;}
 .view.active{display:block;}
 .view-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
 .view-head h1{font-size:26px;font-weight:600;font-style:italic;margin:0;}
 .view-head .count{color:var(--muted);font-size:13px;}
-
 .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);}
 table{border-collapse:collapse;width:100%;min-width:1180px;font-size:13px;}
 thead th{
@@ -147,7 +145,6 @@ border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;
 .spacer-row td{border:none;padding:5px 0;background:transparent;}
 .totals-row td{border-top:2px solid var(--line);border-bottom:none;font-weight:700;background:var(--surface-2);}
 .totals-label{text-align:left;font-family:'Fraunces';font-style:italic;color:var(--accent);font-size:14px;}
-
 /* deudas view */
 .deuda-card{
 display:flex;align-items:center;gap:14px;
@@ -163,7 +160,6 @@ padding:14px 18px;margin-bottom:8px;
 max-width:230px;font-size:12.5px;padding:8px 10px;background:var(--surface-2);
 }
 .deuda-card .amount{font-weight:700;color:var(--debt);font-size:16px;font-variant-numeric:tabular-nums;}
-
 /* fab */
 .fab{
 position:fixed;right:26px;bottom:26px;width:58px;height:58px;border-radius:50%;
@@ -173,7 +169,6 @@ box-shadow:0 8px 26px rgba(143,50,68,.35);z-index:30;transition:.2s;
 font-family:'Fraunces';font-weight:500;
 }
 .fab:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(143,50,68,.48);}
-
 /* modal */
 .overlay{
 display:none;position:fixed;inset:0;background:rgba(10,9,11,.72);backdrop-filter:blur(3px);
@@ -227,14 +222,12 @@ background:var(--surface-2);border-radius:10px;padding:12px 16px;margin-top:14px
 display:flex;justify-content:space-between;font-size:13px;flex-wrap:wrap;gap:8px;
 }
 .totals-preview b{color:var(--text);}
-
 /* debe popover */
 .pop-overlay{display:none;position:fixed;inset:0;z-index:60;align-items:center;justify-content:center;background:rgba(10,9,11,.6);}
 .pop-overlay.active{display:flex;}
 .pop{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;width:280px;}
 .pop h3{margin:0 0 4px;font-size:16px;font-style:italic;}
 .pop .sub{color:var(--muted);font-size:12px;margin-bottom:16px;}
-
 @media(max-width:640px){
 header{padding:12px 14px;}
 nav button{padding:8px 10px;font-size:12.5px;}
@@ -246,7 +239,6 @@ main{padding:18px 12px 100px;}
 </style>
 </head>
 <body>
-
 <div class="login-overlay" id="loginOverlay">
 <form class="login-card" id="loginForm">
 <div class="brand" style="margin-bottom:4px;">Registro<span>.</span></div>
@@ -263,7 +255,6 @@ main{padding:18px 12px 100px;}
 <button type="submit" class="btn btn-primary" style="width:100%;">Ingresar</button>
 </form>
 </div>
-
 <div id="appRoot" style="display:none;">
 <header>
 <div class="brand">Registro<span>.</span></div>
@@ -277,12 +268,11 @@ main{padding:18px 12px 100px;}
 <button class="nav-btn" id="navLogout" title="Cerrar sesión">Salir</button>
 </nav>
 </header>
-
 <main>
-
 <section id="view-ventas" class="view active">
 <div class="view-head">
 <h1 id="ventasHeading">Ventas</h1>
+<button type="button" class="btn btn-ghost" id="btnDescargar" style="padding:8px 14px;font-size:12.5px;">Descargar informe</button>
 <div class="count" id="ventasCount"></div>
 </div>
 <div class="table-wrap">
@@ -299,7 +289,6 @@ main{padding:18px 12px 100px;}
 </table>
 </div>
 </section>
-
 <section id="view-deudas" class="view">
 <div class="view-head">
 <h1>Deudas</h1>
@@ -307,18 +296,14 @@ main{padding:18px 12px 100px;}
 </div>
 <div id="deudasList"></div>
 </section>
-
 </main>
-
 <button class="fab" id="fabAdd" title="Nueva venta">+</button>
-
 <!-- MODAL NUEVA VENTA -->
 <div class="overlay" id="overlay">
 <div class="modal">
 <h2>Nueva venta</h2>
 <div class="sub">Cargá los datos de la clienta y el detalle de la compra</div>
 <form id="ventaForm">
-
 <div class="field-row">
 <div class="field field-group">
 <label>Código</label>
@@ -333,12 +318,10 @@ main{padding:18px 12px 100px;}
 <input type="text" id="fFechaEvento" placeholder="ej: 15/08 o septiembre">
 </div>
 </div>
-
 <div class="field-group">
 <label>Nombre de la clienta</label>
 <input type="text" id="fCliente" required placeholder="Nombre y apellido">
 </div>
-
 <div class="field-row">
 <div class="field field-group">
 <label>DNI</label>
@@ -349,7 +332,6 @@ main{padding:18px 12px 100px;}
 <input type="text" id="fCel" placeholder="opcional">
 </div>
 </div>
-
 <div class="field-group">
 <label>Punto de venta</label>
 <select id="fPunto">
@@ -358,29 +340,23 @@ main{padding:18px 12px 100px;}
 <option value="Salda Cta Cte">Salda Cta Cte</option>
 </select>
 </div>
-
 <div id="productosSection">
 <div class="section-label">Productos</div>
 <div id="productosList"></div>
 <button type="button" class="add-line" id="addProducto">+ Agregar producto</button>
 </div>
-
 <div id="detalleSaldaField" class="field-group" style="display:none;">
 <label>Detalle</label>
 <input type="text" id="fDetalleSalda" placeholder="ej: salda deuda de julio">
 </div>
-
 <div class="field-group">
 <label>Detalle</label>
 <input type="text" id="fDetalle" placeholder="Notas u observaciones sobre la venta (opcional)">
 </div>
-
 <div class="section-label">Métodos de pago</div>
 <div id="pagosList"></div>
 <button type="button" class="add-line" id="addPago">+ Agregar método de pago</button>
-
 <div class="totals-preview" id="totalsPreview"></div>
-
 <div class="modal-actions">
 <button type="button" class="btn btn-ghost" id="cancelBtn">Cancelar</button>
 <button type="submit" class="btn btn-primary">Guardar venta</button>
@@ -388,7 +364,6 @@ main{padding:18px 12px 100px;}
 </form>
 </div>
 </div>
-
 <!-- POPOVER DEBE -->
 <div class="pop-overlay" id="popOverlay">
 <div class="pop">
@@ -408,7 +383,6 @@ main{padding:18px 12px 100px;}
 <button type="button" class="btn btn-ghost" id="popRevert" style="width:100%;margin-top:8px;display:none;">Revertir pagos</button>
 </div>
 </div>
-
 <!-- POPOVER DETALLE -->
 <div class="pop-overlay" id="detOverlay">
 <div class="pop" style="position:relative;">
@@ -417,7 +391,6 @@ main{padding:18px 12px 100px;}
 <div class="sub" id="detContent" style="white-space:pre-wrap;margin-top:6px;"></div>
 </div>
 </div>
-
 <!-- POPOVER COSTOS -->
 <div class="pop-overlay" id="costosOverlay">
 <div class="pop" style="position:relative;max-width:640px;width:92vw;">
@@ -434,7 +407,6 @@ main{padding:18px 12px 100px;}
 </div>
 </div>
 </div><!-- /appRoot -->
-
 <script>
 const firebaseConfig = {
 apiKey: "AIzaSyDq5ydzuM2KHMWbFKZ1jVQ3KfWezYB-n2k",
@@ -450,7 +422,6 @@ const db = firebase.firestore();
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
 let ventas = [];
 let unsubscribeVentas = null;
-
 function normalizeVenta(v){
 if(v.debeOriginalARS===undefined) v.debeOriginalARS = v.debeARS||0;
 if(v.debeOriginalUSD===undefined) v.debeOriginalUSD = v.debeUSD||0;
@@ -465,18 +436,15 @@ v.pagosDebe.push({ars:v.debeOriginalARS, usd:v.debeOriginalUSD, fecha:v.fechaPag
 recomputeDebtFromLog(v);
 return v;
 }
-
 const PAGO_TIPOS = ['Efectivo','Efvo usd','Transf. BF','Transf. VF','Tarjeta'];
 const COSTO_TIPOS = ['Avios','Telas','Rufina nuevo','Rufina arreglos'];
 const COSTO_LABELS = {'Avios':'Avíos','Telas':'Telas','Rufina nuevo':'Rufina nuevo','Rufina arreglos':'Rufina arreglos'};
 const PAGO_COLS  = {'Efectivo':'Efectivo','Efvo usd':'Efvo usd','Transf. BF':'Transf. BF','Transf. VF':'Transf. VF','Tarjeta':'Tarjeta'};
-
 function saveVenta(v){ db.collection('ventas').doc(v.id).set(v).catch(err=>alert('Error al guardar: '+err.message)); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function fmt(n){ return '$ ' + Math.round(n).toLocaleString('es-AR'); }
 function fmtUsd(n){ return 'usd ' + Math.round(n).toLocaleString('es-AR'); }
 function fmtDate(iso){ if(!iso) return ''; const [y,m,d]=iso.split('-'); return `${d}/${m}`; }
-
 // ---------- AUTH ----------
 const loginOverlay = document.getElementById('loginOverlay');
 const appRoot = document.getElementById('appRoot');
@@ -492,7 +460,6 @@ errEl.style.display = 'block';
 });
 });
 document.getElementById('navLogout').addEventListener('click', ()=>{ auth.signOut(); });
-
 auth.onAuthStateChanged(user=>{
 if(user){
 loginOverlay.style.display = 'none';
@@ -511,11 +478,9 @@ if(unsubscribeVentas){ unsubscribeVentas(); unsubscribeVentas = null; }
 ventas = [];
 }
 });
-
 // ---------- NAV ----------
 const MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
 let selectedMonth = new Date().toISOString().slice(0,7);
-
 function buildMonthDropdown(){
 const y = selectedMonth.split('-')[0];
 const dd = document.getElementById('monthDropdown');
@@ -533,7 +498,6 @@ renderVentas();
 });
 });
 }
-
 function switchToView(view){
 document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
 document.querySelector(view==='ventas' ? '#navVentas' : '[data-view="deudas"]').classList.add('active');
@@ -541,7 +505,6 @@ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
 document.getElementById('view-'+view).classList.add('active');
 if(view==='deudas') renderDeudas();
 }
-
 document.getElementById('navVentas').addEventListener('click', ()=>{
 switchToView('ventas');
 buildMonthDropdown();
@@ -557,7 +520,6 @@ if(wrap && !wrap.contains(e.target)) document.getElementById('monthDropdown').cl
 });
 document.getElementById('navNueva').addEventListener('click', ()=>openModal());
 document.getElementById('fabAdd').addEventListener('click', ()=>openModal());
-
 // ---------- MODAL ----------
 const overlay = document.getElementById('overlay');
 let editingId = null;
@@ -569,7 +531,6 @@ document.getElementById('productosList').innerHTML='';
 document.getElementById('pagosList').innerHTML='';
 document.querySelector('.modal h2').textContent = v ? 'Editar venta' : 'Nueva venta';
 document.querySelector('.modal .sub').textContent = v ? 'Modificá los datos de la venta' : 'Cargá los datos de la clienta y el detalle de la compra';
-
 if(v){
 document.getElementById('fCod').value = v.cod==='-' ? '' : v.cod;
 document.getElementById('fFecha').value = v.fecha;
@@ -598,13 +559,11 @@ overlay.classList.add('active');
 document.getElementById('cancelBtn').addEventListener('click', ()=>overlay.classList.remove('active'));
 overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('active'); });
 document.getElementById('fPunto').addEventListener('change', togglePuntoFields);
-
 function togglePuntoFields(){
 const isSalda = document.getElementById('fPunto').value === 'Salda Cta Cte';
 document.getElementById('productosSection').style.display = isSalda ? 'none' : 'block';
 document.getElementById('detalleSaldaField').style.display = isSalda ? 'block' : 'none';
 }
-
 function addProductoLine(p){
 const wrap = document.createElement('div');
 wrap.className = 'line-item producto-line';
@@ -627,7 +586,6 @@ wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove()
 document.getElementById('productosList').appendChild(wrap);
 }
 document.getElementById('addProducto').addEventListener('click', ()=>addProductoLine());
-
 function addPagoLine(p){
 const wrap = document.createElement('div');
 wrap.className = 'line-item pago pago-line';
@@ -646,7 +604,6 @@ wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove()
 document.getElementById('pagosList').appendChild(wrap);
 }
 document.getElementById('addPago').addEventListener('click', ()=>addPagoLine());
-
 function readProductos(){
 return [...document.querySelectorAll('.producto-line')].map(l=>({
 nombre: l.querySelector('.p-nombre').value.trim(),
@@ -661,7 +618,6 @@ tipo: l.querySelector('.pg-tipo').value,
 monto: parseFloat(l.querySelector('.pg-monto').value)||0
 })).filter(p=>p.monto>0);
 }
-
 function computeTotals(productos, pagos){
 let totalARS=0, totalUSD=0;
 productos.forEach(p=>{ const sub=p.cant*p.valor; if(p.moneda==='USD') totalUSD+=sub; else totalARS+=sub; });
@@ -673,7 +629,6 @@ const debeARS = Math.max(0, Math.round((totalARS-paidARS)*100)/100);
 const debeUSD = Math.max(0, Math.round((totalUSD-paidUSD)*100)/100);
 return {totalARS,totalUSD,paid,debeARS,debeUSD};
 }
-
 function updateTotalsPreview(){
 const isSalda = document.getElementById('fPunto').value === 'Salda Cta Cte';
 const productos = isSalda ? [] : readProductos();
@@ -687,7 +642,6 @@ const debeTxt = [t.debeARS>0?fmt(t.debeARS):null, t.debeUSD>0?fmtUsd(t.debeUSD):
 html += `<span>Debe: <b>${debeTxt || '—'}</b></span>`;
 document.getElementById('totalsPreview').innerHTML = html;
 }
-
 // ---------- SUBMIT ----------
 document.getElementById('ventaForm').addEventListener('submit', e=>{
 e.preventDefault();
@@ -698,11 +652,9 @@ const productos = isSalda
 : readProductos();
 const pagos = readPagos();
 const t = computeTotals(isSalda?[]:productos, pagos);
-
 const fecha = document.getElementById('fFecha').value;
 const codInput = document.getElementById('fCod').value.trim();
 const cod = codInput || (isSalda ? '-' : '');
-
 const common = {
 cod, cliente: document.getElementById('fCliente').value.trim(),
 fecha, fechaEvento: document.getElementById('fFechaEvento').value.trim(),
@@ -713,7 +665,6 @@ punto, productos, pagos,
 totalARS:t.totalARS, totalUSD:t.totalUSD, paid:t.paid,
 debeOriginalARS:t.debeARS, debeOriginalUSD:t.debeUSD
 };
-
 let vSaved;
 if(editingId){
 const v = ventas.find(x=>x.id===editingId);
@@ -731,7 +682,6 @@ overlay.classList.remove('active');
 editingId = null;
 renderVentas();
 });
-
 function recomputeDebtFromLog(v){
 const loggedARS = (v.pagosDebe||[]).reduce((s,p)=>s+(p.ars||0),0);
 const loggedUSD = (v.pagosDebe||[]).reduce((s,p)=>s+(p.usd||0),0);
@@ -744,25 +694,55 @@ if(!v.fechaPago) v.fechaPago = v.pagosDebe.length ? v.pagosDebe[v.pagosDebe.leng
 v.pagado = false;
 }
 }
-
 // ---------- RENDER VENTAS ----------
+function exportExcel(){
+const [y, m] = selectedMonth.split('-');
+const mesNombre = MESES[parseInt(m,10)-1];
+const filtered = ventas
+.filter(v => (v.fecha||'').slice(0,7) === selectedMonth)
+.sort((a,b)=> (a.fecha||'').localeCompare(b.fecha||''));
+const header = ['Cód','Clienta','Fecha compra','Punto de venta','Fecha evento','Producto','Cant','Valor unit','Moneda',
+'Total $','Total usd','Efectivo','Efvo usd','Transf. BF','Transf. VF','Tarjeta','Debe $','Debe usd','DNI','Factura','Celular','Detalle'];
+const rows = [header];
+let sT=0,sU=0,sE=0,sEu=0,sBF=0,sVF=0,sTa=0,sDA=0,sDU=0;
+filtered.forEach(v=>{
+const prods = v.productos.length ? v.productos : [{nombre:'',cant:'',valor:'',moneda:'ARS'}];
+prods.forEach((p,i)=>{
+rows.push([
+i===0?v.cod:'', i===0?v.cliente:'', i===0?fmtDate(v.fecha):'', i===0?v.punto:'', i===0?(v.fechaEvento||''):'',
+p.nombre||'', p.cant??'', p.valor??'', p.moneda||'',
+i===0?(v.totalARS||''):'', i===0?(v.totalUSD||''):'',
+i===0?(v.paid['Efectivo']||''):'', i===0?(v.paid['Efvo usd']||''):'', i===0?(v.paid['Transf. BF']||''):'', i===0?(v.paid['Transf. VF']||''):'', i===0?(v.paid['Tarjeta']||''):'',
+i===0?(v.debeARS||''):'', i===0?(v.debeUSD||''):'',
+i===0?(v.dni||''):'', i===0?(v.factura||''):'', i===0?(v.cel||''):'', i===0?(v.detalle||''):''
+]);
+});
+sT+=v.totalARS||0; sU+=v.totalUSD||0;
+sE+=v.paid['Efectivo']||0; sEu+=v.paid['Efvo usd']||0; sBF+=v.paid['Transf. BF']||0; sVF+=v.paid['Transf. VF']||0; sTa+=v.paid['Tarjeta']||0;
+sDA+=v.debeARS||0; sDU+=v.debeUSD||0;
+});
+rows.push([]);
+rows.push(['TOTALES','','','','','','','','', sT,sU, sE,sEu,sBF,sVF,sTa, sDA,sDU,'','','','']);
+const ws = XLSX.utils.aoa_to_sheet(rows);
+ws['!cols'] = header.map(()=>({wch:14}));
+const wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, ws, mesNombre.slice(0,25));
+XLSX.writeFile(wb, `ventas_${mesNombre.toLowerCase()}_${y.slice(2)}.xlsx`);
+}
+document.getElementById('btnDescargar').addEventListener('click', exportExcel);
 function renderVentas(){
 const body = document.getElementById('ventasBody');
 body.innerHTML = '';
-
 const [y, m] = selectedMonth.split('-');
 document.getElementById('ventasHeading').textContent = `VENTAS ${MESES[parseInt(m,10)-1]} ${y.slice(2)}`;
-
 const sorted = ventas
 .filter(v => (v.fecha||'').slice(0,7) === selectedMonth)
 .sort((a,b)=> (a.fecha||'').localeCompare(b.fecha||''));
 document.getElementById('ventasCount').textContent = sorted.length ? `${sorted.length} registros` : '';
-
 if(!sorted.length){
 body.innerHTML = `<tr><td colspan="22"><div class="empty-state"><div class="big">No hay ventas cargadas este mes</div>Tocá el botón + para agregar la primera, o elegí otro mes arriba</div></td></tr>`;
 return;
 }
-
 sorted.forEach(v=>{
 const rows = v.productos.length ? v.productos : [{nombre:'',cant:null,valor:null,moneda:'ARS'}];
 rows.forEach((p,i)=>{
@@ -803,9 +783,7 @@ tr.innerHTML = identityCells + prodCells + payCells;
 body.appendChild(tr);
 });
 });
-
 body.insertAdjacentHTML('beforeend', totalsRowsHtml(sorted));
-
 document.querySelectorAll('.debe-cell[data-id]').forEach(el=>{
 el.addEventListener('click', ()=> openDebePop(el.dataset.id));
 });
@@ -822,17 +800,14 @@ document.querySelectorAll('.costos-btn').forEach(el=>{
 el.addEventListener('click', ()=> openCostosPop(el.dataset.id));
 });
 }
-
 function openDetPop(id){
 const v = ventas.find(x=>x.id===id);
 if(!v) return;
 document.getElementById('detContent').textContent = v.detalle || 'Sin detalle cargado.';
 document.getElementById('detOverlay').classList.add('active');
 }
-
 // ---------- COSTOS ----------
 let currentCostosId = null;
-
 function addCostoLine(c){
 const wrap = document.createElement('div');
 wrap.className = 'line-item costo costo-line';
@@ -864,7 +839,6 @@ wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove()
 document.getElementById('costosLinesList').appendChild(wrap);
 }
 document.getElementById('addCostoLine').addEventListener('click', ()=>{ addCostoLine(); updateCostosTotals(); });
-
 function readCostos(){
 return [...document.querySelectorAll('.costo-line')].map(l=>({
 tipo: l.querySelector('.co-tipo').value,
@@ -872,7 +846,6 @@ detalle: l.querySelector('.co-detalle').value.trim(),
 valor: parseFloat(l.querySelector('.co-valor').value)||0
 })).filter(c=>c.valor>0);
 }
-
 function updateCostosTotals(){
 const costos = readCostos();
 const totalCostos = costos.filter(c=>c.tipo!=='Rufina arreglos').reduce((s,c)=>s+c.valor,0);
@@ -881,7 +854,6 @@ document.getElementById('costosTotals').innerHTML =
 `<div><b>Total costos:</b> ${totalCostos?fmt(totalCostos):'$ 0'}</div>
 <div><b>Total arreglos:</b> ${totalArreglos||0}</div>`;
 }
-
 function openCostosPop(id){
 const v = ventas.find(x=>x.id===id);
 if(!v) return;
@@ -903,14 +875,12 @@ v.costos = readCostos();
 saveVenta(v);
 document.getElementById('costosOverlay').classList.remove('active');
 });
-
 function factCellHtml(v){
 if(v.factura){
 return `<span class="fact-val fact-trigger" data-id="${v.id}">${esc(v.factura)}</span>`;
 }
 return `<button type="button" class="fact-btn fact-trigger" data-id="${v.id}" title="Agregar factura">+</button>`;
 }
-
 function editFactura(id){
 const v = ventas.find(x=>x.id===id);
 if(!v) return;
@@ -920,7 +890,6 @@ v.factura = val.trim();
 saveVenta(v);
 renderVentas();
 }
-
 function fmtDateShort(iso){
 if(!iso) return '';
 const [y,m,d] = iso.split('-');
@@ -937,7 +906,6 @@ const entries = (v.pagosDebe||[]).filter(p => currency==='USD' ? p.usd>0 : p.ars
 if(entries.length) return entries[entries.length-1].fecha;
 return v.fechaPago || '';
 }
-
 function totalsRowsHtml(sorted){
 if(!sorted.length) return '';
 let sumCant=0,sumTotalARS=0,sumTotalUSD=0,sumEf=0,sumEfUsd=0,sumBF=0,sumVF=0,sumTarj=0,sumDebeARS=0,sumDebeUSD=0;
@@ -969,7 +937,6 @@ const totals = `<tr class="totals-row">
 </tr>`;
 return spacer + totals;
 }
-
 function debeCellHtml(v, currency){
 const original = currency==='USD' ? v.debeOriginalUSD : v.debeOriginalARS;
 if(!(original>0)) return '';
@@ -982,9 +949,7 @@ return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${d?`<span class="deb
 const log = logLines(v, currency);
 return `<div class="debe-cell" data-id="${v.id}">${formatter(remaining)}${log?`<div class="debe-log">${log}</div>`:''}</div>`;
 }
-
 function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-
 // ---------- DEBE POPOVER ----------
 let currentDebeId = null;
 function openDebePop(id){
@@ -998,12 +963,10 @@ const logArs = logLines(v,'ARS');
 const logUsd = logLines(v,'USD');
 const log = [logArs, logUsd].filter(Boolean).join('<br>');
 document.getElementById('popLog').innerHTML = log ? `<div class="debe-log" style="margin-bottom:12px;">${log}</div>` : '';
-
 let inputsHtml = '';
 if(v.debeARS>0) inputsHtml += `<div class="field-group"><label>Pagó ahora ($)</label><input type="number" id="popPagoArs" placeholder="0"></div>`;
 if(v.debeUSD>0) inputsHtml += `<div class="field-group"><label>Pagó ahora (usd)</label><input type="number" id="popPagoUsd" placeholder="0"></div>`;
 document.getElementById('popInputs').innerHTML = inputsHtml;
-
 document.getElementById('popFecha').value = new Date().toISOString().slice(0,10);
 const pendiente = v.debeARS>0 || v.debeUSD>0;
 document.getElementById('popRegistrar').style.display = pendiente ? 'block' : 'none';
@@ -1015,7 +978,6 @@ document.getElementById('popCancel').addEventListener('click', ()=>document.getE
 document.getElementById('detClose').addEventListener('click', ()=>document.getElementById('detOverlay').classList.remove('active'));
 document.getElementById('detOverlay').addEventListener('click', e=>{ if(e.target.id==='detOverlay') e.currentTarget.classList.remove('active'); });
 document.getElementById('popOverlay').addEventListener('click', e=>{ if(e.target.id==='popOverlay') e.currentTarget.classList.remove('active'); });
-
 document.getElementById('popRegistrar').addEventListener('click', ()=>{
 const v = ventas.find(x=>x.id===currentDebeId);
 if(!v) return;
@@ -1032,7 +994,6 @@ saveVenta(v);
 document.getElementById('popOverlay').classList.remove('active');
 renderVentas();
 });
-
 document.getElementById('popConfirm').addEventListener('click', ()=>{
 const v = ventas.find(x=>x.id===currentDebeId);
 if(!v) return;
@@ -1047,7 +1008,6 @@ saveVenta(v);
 document.getElementById('popOverlay').classList.remove('active');
 renderVentas();
 });
-
 document.getElementById('popRevert').addEventListener('click', ()=>{
 const v = ventas.find(x=>x.id===currentDebeId);
 if(!v) return;
@@ -1058,7 +1018,6 @@ saveVenta(v);
 document.getElementById('popOverlay').classList.remove('active');
 renderVentas();
 });
-
 // ---------- RENDER DEUDAS ----------
 function renderDeudas(){
 const list = document.getElementById('deudasList');
@@ -1087,7 +1046,6 @@ saveVenta(v);
 });
 });
 }
-
 renderVentas();
 </script>
 </body>
