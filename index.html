@@ -459,7 +459,7 @@ document.querySelectorAll('.nav-btn').forEach(b=>{
     if(b.dataset.view==='deudas') renderDeudas();
   });
 });
-document.getElementById('fabAdd').addEventListener('click', openModal);
+document.getElementById('fabAdd').addEventListener('click', ()=>openModal());
 
 // ---------- MODAL ----------
 const overlay = document.getElementById('overlay');
