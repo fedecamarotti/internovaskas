@@ -52,6 +52,20 @@ header{
 .brand{font-size:19px;font-weight:600;letter-spacing:.3px;font-style:italic;}
 .brand span{color:var(--accent);}
 nav{display:flex;gap:6px;}
+.nav-item-wrap{position:relative;}
+.month-dropdown{
+  display:none;position:absolute;top:calc(100% + 8px);left:0;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:8px;box-shadow:0 10px 26px rgba(0,0,0,.12);z-index:40;
+  grid-template-columns:repeat(3,1fr);gap:4px;width:270px;
+}
+.month-dropdown.open{display:grid;}
+.month-dropdown button{
+  background:none;border:none;color:var(--text);font-family:'Inter';font-size:12px;font-weight:600;
+  padding:9px 6px;border-radius:7px;cursor:pointer;text-align:center;
+}
+.month-dropdown button:hover{background:var(--surface-2);}
+.month-dropdown button.active{background:var(--accent-soft);color:var(--accent);}
 nav button{
   background:none;border:none;color:var(--muted);font-family:'Inter';font-size:13.5px;font-weight:600;
   padding:9px 15px;border-radius:8px;cursor:pointer;letter-spacing:.2px;transition:.15s;
@@ -84,6 +98,9 @@ tbody td.pay-end{border-right:1px solid var(--line);}
 tbody tr:last-child td{border-bottom:none;}
 tbody tr:hover{background:rgba(0,0,0,.025);}
 .center{text-align:center;}
+.sticky-clienta{position:sticky;left:0;z-index:6;width:150px;min-width:150px;max-width:150px;white-space:normal;background:var(--surface);box-shadow:2px 0 4px -2px rgba(0,0,0,.12);}
+.sticky-fecha{position:sticky;left:150px;z-index:6;width:70px;min-width:70px;max-width:70px;background:var(--surface);box-shadow:2px 0 4px -2px rgba(0,0,0,.12);}
+thead th.sticky-clienta,thead th.sticky-fecha{z-index:16;background:var(--surface-2);}
 .cliente-name{font-weight:600;}
 .cod-cell{display:flex;align-items:center;gap:5px;}
 .edit-btn{
@@ -104,6 +121,7 @@ tbody tr:hover{background:rgba(0,0,0,.025);}
 .debe-cell:hover{background:rgba(161,63,58,.12);}
 .debe-cell.paid{color:var(--paid);cursor:pointer;font-weight:600;}
 .debe-log{font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.debe-log.inline{display:inline;margin-top:0;margin-left:5px;}
 .fact-btn{
   background:none;border:1px dashed var(--line);color:var(--muted);width:24px;height:24px;
   border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
@@ -170,6 +188,7 @@ input::placeholder{color:#a8a196;}
   display:grid;grid-template-columns:2fr 0.7fr 1fr auto auto;gap:8px;margin-bottom:8px;align-items:end;
 }
 .line-item.pago{grid-template-columns:1.4fr 1fr auto;}
+.line-item.costo{grid-template-columns:1.2fr 1.3fr 0.8fr auto;}
 .mini-label{font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
 .icon-btn{
   background:var(--surface-2);border:1px solid var(--line);color:var(--muted);width:36px;height:36px;
@@ -209,6 +228,7 @@ input::placeholder{color:#a8a196;}
   main{padding:18px 12px 100px;}
   .line-item{grid-template-columns:1fr 1fr;grid-auto-flow:row;}
   .line-item.pago{grid-template-columns:1fr 1fr;}
+  .line-item.costo{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -235,7 +255,10 @@ input::placeholder{color:#a8a196;}
 <header>
   <div class="brand">Registro<span>.</span></div>
   <nav>
-    <button class="nav-btn active" data-view="ventas">Ventas</button>
+    <div class="nav-item-wrap">
+      <button class="nav-btn active" id="navVentas" data-view="ventas">Ventas ▾</button>
+      <div class="month-dropdown" id="monthDropdown"></div>
+    </div>
     <button class="nav-btn" data-view="deudas">Deudas</button>
     <button class="nav-btn" id="navNueva">+ Nueva venta</button>
     <button class="nav-btn" id="navLogout" title="Cerrar sesión">Salir</button>
@@ -246,15 +269,15 @@ input::placeholder{color:#a8a196;}
 
   <section id="view-ventas" class="view active">
     <div class="view-head">
-      <h1>Ventas</h1>
+      <h1 id="ventasHeading">Ventas</h1>
       <div class="count" id="ventasCount"></div>
     </div>
     <div class="table-wrap">
       <table id="ventasTable">
         <thead>
           <tr>
-            <th>Cód.</th><th>Clienta</th><th>Fecha<br>compra</th><th>Punto<br>de venta</th><th>Fecha<br>evento</th>
-            <th>Producto</th><th>Det</th><th>Cant</th><th class="val-col">Valor<br>unit.</th><th class="val-col">Total<br>$</th><th class="val-col">Total<br>usd</th>
+            <th>Cód.</th><th class="sticky-clienta">Clienta</th><th class="sticky-fecha">Fecha<br>compra</th><th>Punto<br>de venta</th><th>Fecha<br>evento</th>
+            <th>Producto</th><th>Det</th><th>Cant</th><th class="val-col">Valor<br>unit.</th><th class="val-col">Costos</th><th class="val-col">Total<br>$</th><th class="val-col">Total<br>usd</th>
             <th class="pay-col pay-start val-col">EFVO<br>$</th><th class="pay-col val-col">Efvo<br>usd</th><th class="pay-col val-col">Transf.<br>BF</th><th class="pay-col val-col">Transf.<br>VF</th><th class="pay-col val-col">Tarjeta</th>
             <th class="pay-col val-col">DEBE<br>$</th><th class="pay-col pay-end val-col">DEBE<br>USD</th><th>DNI</th><th>Fact.</th><th>Cel</th>
           </tr>
@@ -381,6 +404,22 @@ input::placeholder{color:#a8a196;}
     <div class="sub" id="detContent" style="white-space:pre-wrap;margin-top:6px;"></div>
   </div>
 </div>
+
+<!-- POPOVER COSTOS -->
+<div class="pop-overlay" id="costosOverlay">
+  <div class="pop" style="position:relative;max-width:440px;">
+    <button type="button" id="costosClose" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1;">×</button>
+    <h3>Costos</h3>
+    <div class="sub" id="costosSub" style="margin-bottom:16px;"></div>
+    <div id="costosLinesList"></div>
+    <button type="button" class="add-line" id="addCostoLine">+ Agregar línea</button>
+    <div id="costosTotals" style="margin-top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:13px;"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="costosCancel">Cerrar</button>
+      <button type="button" class="btn btn-primary" id="costosGuardar">Guardar costos</button>
+    </div>
+  </div>
+</div>
 </div><!-- /appRoot -->
 
 <script>
@@ -406,6 +445,7 @@ function normalizeVenta(v){
   if(v.factura===undefined) v.factura = '';
   if(v.detalle===undefined) v.detalle = '';
   if(v.notaDeuda===undefined) v.notaDeuda = '';
+  if(!v.costos) v.costos = [];
   if(v.pagado && v.pagosDebe.length===0 && (v.debeOriginalARS>0 || v.debeOriginalUSD>0)){
     v.pagosDebe.push({ars:v.debeOriginalARS, usd:v.debeOriginalUSD, fecha:v.fechaPago||new Date().toISOString().slice(0,10)});
   }
@@ -414,6 +454,8 @@ function normalizeVenta(v){
 }
 
 const PAGO_TIPOS = ['Efectivo','Efvo usd','Transf. BF','Transf. VF','Tarjeta'];
+const COSTO_TIPOS = ['Avios','Telas','Rufina nuevo','Rufina arreglos'];
+const COSTO_LABELS = {'Avios':'Avíos','Telas':'Telas','Rufina nuevo':'Rufina nuevo','Rufina arreglos':'Rufina arreglos'};
 const PAGO_COLS  = {'Efectivo':'Efectivo','Efvo usd':'Efvo usd','Transf. BF':'Transf. BF','Transf. VF':'Transf. VF','Tarjeta':'Tarjeta'};
 
 function saveVenta(v){ db.collection('ventas').doc(v.id).set(v).catch(err=>alert('Error al guardar: '+err.message)); }
@@ -458,16 +500,49 @@ auth.onAuthStateChanged(user=>{
 });
 
 // ---------- NAV ----------
-document.querySelectorAll('.nav-btn').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    if(b.id==='navNueva'){ openModal(); return; }
-    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById('view-'+b.dataset.view).classList.add('active');
-    if(b.dataset.view==='deudas') renderDeudas();
+const MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+let selectedMonth = new Date().toISOString().slice(0,7);
+
+function buildMonthDropdown(){
+  const y = selectedMonth.split('-')[0];
+  const dd = document.getElementById('monthDropdown');
+  dd.innerHTML = MESES.map((m,i)=>{
+    const mm = String(i+1).padStart(2,'0');
+    const val = `${y}-${mm}`;
+    return `<button type="button" class="${val===selectedMonth?'active':''}" data-month="${val}">${m} ${y.slice(2)}</button>`;
+  }).join('');
+  dd.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      selectedMonth = btn.dataset.month;
+      dd.classList.remove('open');
+      switchToView('ventas');
+      renderVentas();
+    });
   });
+}
+
+function switchToView(view){
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelector(view==='ventas' ? '#navVentas' : '[data-view="deudas"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if(view==='deudas') renderDeudas();
+}
+
+document.getElementById('navVentas').addEventListener('click', ()=>{
+  switchToView('ventas');
+  buildMonthDropdown();
+  document.getElementById('monthDropdown').classList.toggle('open');
 });
+document.querySelector('[data-view="deudas"]').addEventListener('click', ()=>{
+  document.getElementById('monthDropdown').classList.remove('open');
+  switchToView('deudas');
+});
+document.addEventListener('click', e=>{
+  const wrap = document.querySelector('.nav-item-wrap');
+  if(wrap && !wrap.contains(e.target)) document.getElementById('monthDropdown').classList.remove('open');
+});
+document.getElementById('navNueva').addEventListener('click', ()=>openModal());
 document.getElementById('fabAdd').addEventListener('click', ()=>openModal());
 
 // ---------- MODAL ----------
@@ -633,7 +708,7 @@ document.getElementById('ventaForm').addEventListener('submit', e=>{
     recomputeDebtFromLog(v);
     vSaved = v;
   } else {
-    const v = Object.assign({id: uid(), factura:'', notaDeuda:'', pagosDebe:[], pagado:false, fechaPago:null}, common);
+    const v = Object.assign({id: uid(), factura:'', notaDeuda:'', costos:[], pagosDebe:[], pagado:false, fechaPago:null}, common);
     recomputeDebtFromLog(v);
     ventas.push(v);
     vSaved = v;
@@ -661,11 +736,17 @@ function recomputeDebtFromLog(v){
 function renderVentas(){
   const body = document.getElementById('ventasBody');
   body.innerHTML = '';
-  const sorted = [...ventas].sort((a,b)=> (a.fecha||'').localeCompare(b.fecha||''));
+
+  const [y, m] = selectedMonth.split('-');
+  document.getElementById('ventasHeading').textContent = `VENTAS ${MESES[parseInt(m,10)-1]} ${y.slice(2)}`;
+
+  const sorted = ventas
+    .filter(v => (v.fecha||'').slice(0,7) === selectedMonth)
+    .sort((a,b)=> (a.fecha||'').localeCompare(b.fecha||''));
   document.getElementById('ventasCount').textContent = sorted.length ? `${sorted.length} registros` : '';
 
   if(!sorted.length){
-    body.innerHTML = `<tr><td colspan="21"><div class="empty-state"><div class="big">Todavía no hay ventas cargadas</div>Tocá el botón + para agregar la primera</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="22"><div class="empty-state"><div class="big">No hay ventas cargadas este mes</div>Tocá el botón + para agregar la primera, o elegí otro mes arriba</div></td></tr>`;
     return;
   }
 
@@ -678,8 +759,8 @@ function renderVentas(){
       if(i===0){
         identityCells = `
           <td rowspan="${rows.length}" class="cod"><div class="cod-cell"><button type="button" class="edit-btn edit-venta" data-id="${v.id}" title="Editar venta">✎</button>${v.cod}</div></td>
-          <td rowspan="${rows.length}" class="cliente-name">${esc(v.cliente)}</td>
-          <td rowspan="${rows.length}">${fmtDate(v.fecha)}</td>
+          <td rowspan="${rows.length}" class="cliente-name sticky-clienta">${esc(v.cliente)}</td>
+          <td rowspan="${rows.length}" class="sticky-fecha">${fmtDate(v.fecha)}</td>
           <td rowspan="${rows.length}" class="center"><span class="badge ${badgeClass}">${v.punto}</span></td>
           <td rowspan="${rows.length}" class="center">${esc(v.fechaEvento)||''}</td>`;
       }
@@ -691,6 +772,7 @@ function renderVentas(){
       let payCells = '';
       if(i===0){
         payCells = `
+          <td rowspan="${rows.length}" class="center val-col"><button type="button" class="edit-btn costos-btn" data-id="${v.id}" title="Costos">+</button></td>
           <td rowspan="${rows.length}" class="money total-bold val-col">${v.totalARS?fmt(v.totalARS):''}</td>
           <td rowspan="${rows.length}" class="money total-bold val-col">${v.totalUSD?fmtUsd(v.totalUSD):''}</td>
           <td rowspan="${rows.length}" class="money pay-col pay-start val-col">${v.paid['Efectivo']?fmt(v.paid['Efectivo']):''}</td>
@@ -723,6 +805,9 @@ function renderVentas(){
   document.querySelectorAll('.det-btn').forEach(el=>{
     el.addEventListener('click', ()=> openDetPop(el.dataset.id));
   });
+  document.querySelectorAll('.costos-btn').forEach(el=>{
+    el.addEventListener('click', ()=> openCostosPop(el.dataset.id));
+  });
 }
 
 function openDetPop(id){
@@ -731,6 +816,74 @@ function openDetPop(id){
   document.getElementById('detContent').textContent = v.detalle || 'Sin detalle cargado.';
   document.getElementById('detOverlay').classList.add('active');
 }
+
+// ---------- COSTOS ----------
+let currentCostosId = null;
+
+function addCostoLine(c){
+  const wrap = document.createElement('div');
+  wrap.className = 'line-item costo costo-line';
+  wrap.innerHTML = `
+    <div><div class="mini-label">Tipo</div>
+      <select class="co-tipo">${COSTO_TIPOS.map(t=>`<option value="${t}">${COSTO_LABELS[t]}</option>`).join('')}</select>
+    </div>
+    <div><div class="mini-label">Detalle</div><input type="text" class="co-detalle" placeholder="opcional"></div>
+    <div><div class="mini-label co-label">$</div><input type="number" class="co-valor" placeholder="0"></div>
+    <button type="button" class="icon-btn remove-line">×</button>`;
+  const tipoSel = wrap.querySelector('.co-tipo');
+  const label = wrap.querySelector('.co-label');
+  function syncLabel(){ label.textContent = tipoSel.value==='Rufina arreglos' ? 'Cant.' : '$'; }
+  if(c){
+    tipoSel.value = c.tipo||'Avios';
+    wrap.querySelector('.co-detalle').value = c.detalle||'';
+    wrap.querySelector('.co-valor').value = c.valor||'';
+  }
+  syncLabel();
+  tipoSel.addEventListener('change', ()=>{ syncLabel(); updateCostosTotals(); });
+  wrap.querySelectorAll('input').forEach(el=>el.addEventListener('input', updateCostosTotals));
+  wrap.querySelector('.remove-line').addEventListener('click', ()=>{ wrap.remove(); updateCostosTotals(); });
+  document.getElementById('costosLinesList').appendChild(wrap);
+}
+document.getElementById('addCostoLine').addEventListener('click', ()=>{ addCostoLine(); updateCostosTotals(); });
+
+function readCostos(){
+  return [...document.querySelectorAll('.costo-line')].map(l=>({
+    tipo: l.querySelector('.co-tipo').value,
+    detalle: l.querySelector('.co-detalle').value.trim(),
+    valor: parseFloat(l.querySelector('.co-valor').value)||0
+  })).filter(c=>c.valor>0);
+}
+
+function updateCostosTotals(){
+  const costos = readCostos();
+  const totalCostos = costos.filter(c=>c.tipo!=='Rufina arreglos').reduce((s,c)=>s+c.valor,0);
+  const totalArreglos = costos.filter(c=>c.tipo==='Rufina arreglos').reduce((s,c)=>s+c.valor,0);
+  document.getElementById('costosTotals').innerHTML =
+    `<div><b>Total costos:</b> ${totalCostos?fmt(totalCostos):'$ 0'}</div>
+     <div><b>Total arreglos:</b> ${totalArreglos||0}</div>`;
+}
+
+function openCostosPop(id){
+  const v = ventas.find(x=>x.id===id);
+  if(!v) return;
+  currentCostosId = id;
+  document.getElementById('costosSub').textContent = `${v.cliente} — cód. ${v.cod}`;
+  document.getElementById('costosLinesList').innerHTML = '';
+  const costos = v.costos && v.costos.length ? v.costos : [null];
+  costos.forEach(c=>addCostoLine(c));
+  updateCostosTotals();
+  document.getElementById('costosOverlay').classList.add('active');
+}
+document.getElementById('costosClose').addEventListener('click', ()=>document.getElementById('costosOverlay').classList.remove('active'));
+document.getElementById('costosCancel').addEventListener('click', ()=>document.getElementById('costosOverlay').classList.remove('active'));
+document.getElementById('costosOverlay').addEventListener('click', e=>{ if(e.target.id==='costosOverlay') e.currentTarget.classList.remove('active'); });
+document.getElementById('costosGuardar').addEventListener('click', ()=>{
+  const v = ventas.find(x=>x.id===currentCostosId);
+  if(!v) return;
+  v.costos = readCostos();
+  saveVenta(v);
+  document.getElementById('costosOverlay').classList.remove('active');
+});
 
 function factCellHtml(v){
   if(v.factura){
@@ -776,12 +929,13 @@ function totalsRowsHtml(sorted){
     sumBF += v.paid['Transf. BF']||0; sumVF += v.paid['Transf. VF']||0; sumTarj += v.paid['Tarjeta']||0;
     sumDebeARS += v.debeARS||0; sumDebeUSD += v.debeUSD||0;
   });
-  const spacer = '<tr class="spacer-row"><td colspan="21">&nbsp;</td></tr>'.repeat(3);
+  const spacer = '<tr class="spacer-row"><td colspan="22">&nbsp;</td></tr>'.repeat(3);
   const totals = `<tr class="totals-row">
     <td colspan="5"></td>
     <td class="totals-label center">TOTALES</td>
     <td></td>
     <td class="center">${sumCant||''}</td>
+    <td class="val-col"></td>
     <td class="val-col"></td>
     <td class="money total-bold val-col">${sumTotalARS?fmt(sumTotalARS):''}</td>
     <td class="money total-bold val-col">${sumTotalUSD?fmtUsd(sumTotalUSD):''}</td>
@@ -804,7 +958,7 @@ function debeCellHtml(v, currency){
   const formatter = currency==='USD' ? fmtUsd : fmt;
   if(remaining<=0){
     const d = lastPaymentDate(v, currency);
-    return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${d?`<div class="debe-log">${fmtDateShort(d)}</div>`:''}</div>`;
+    return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${d?`<span class="debe-log inline">${fmtDateShort(d)}</span>`:''}</div>`;
   }
   const log = logLines(v, currency);
   return `<div class="debe-cell" data-id="${v.id}">${formatter(remaining)}${log?`<div class="debe-log">${log}</div>`:''}</div>`;
@@ -889,7 +1043,9 @@ document.getElementById('popRevert').addEventListener('click', ()=>{
 // ---------- RENDER DEUDAS ----------
 function renderDeudas(){
   const list = document.getElementById('deudasList');
-  const pendientes = ventas.filter(v=> !v.pagado && (v.debeARS>0 || v.debeUSD>0));
+  const pendientes = ventas
+    .filter(v=> !v.pagado && (v.debeARS>0 || v.debeUSD>0))
+    .sort((a,b)=> (a.fecha||'').localeCompare(b.fecha||''));
   document.getElementById('deudasCount').textContent = pendientes.length ? `${pendientes.length} clientas con saldo pendiente` : '';
   if(!pendientes.length){
     list.innerHTML = `<div class="empty-state"><div class="big">No hay deudas pendientes</div>Todas las clientas están al día</div>`;
