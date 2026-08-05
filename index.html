@@ -98,7 +98,7 @@ tbody tr:hover{background:rgba(0,0,0,.025);}
 .badge.salda{background:var(--salda-bg);color:var(--salda);}
 .money{font-variant-numeric:tabular-nums;}
 .money.total-bold{font-weight:700;}
-.val-col{width:96px;min-width:96px;max-width:96px;}
+.val-col{width:96px;min-width:96px;max-width:96px;text-align:center;}
 .muted{color:var(--muted);}
 .debe-cell{cursor:pointer;font-weight:700;color:var(--debt);border-radius:6px;padding:4px 8px;transition:.15s;}
 .debe-cell:hover{background:rgba(161,63,58,.12);}
@@ -254,7 +254,7 @@ input::placeholder{color:#a8a196;}
         <thead>
           <tr>
             <th>Cód.</th><th>Clienta</th><th>Fecha<br>compra</th><th>Punto<br>de venta</th><th>Fecha<br>evento</th>
-            <th>Producto</th><th>Cant</th><th class="val-col">Valor<br>unit.</th><th class="val-col">Total<br>$</th><th class="val-col">Total<br>usd</th>
+            <th>Producto</th><th>Det</th><th>Cant</th><th class="val-col">Valor<br>unit.</th><th class="val-col">Total<br>$</th><th class="val-col">Total<br>usd</th>
             <th class="pay-col pay-start val-col">EFVO<br>$</th><th class="pay-col val-col">Efvo<br>usd</th><th class="pay-col val-col">Transf.<br>BF</th><th class="pay-col val-col">Transf.<br>VF</th><th class="pay-col val-col">Tarjeta</th>
             <th class="pay-col val-col">DEBE<br>$</th><th class="pay-col pay-end val-col">DEBE<br>USD</th><th>DNI</th><th>Fact.</th><th>Cel</th>
           </tr>
@@ -370,6 +370,15 @@ input::placeholder{color:#a8a196;}
     </div>
     <button type="button" class="btn btn-ghost" id="popConfirm" style="width:100%;margin-top:8px;">Marcar todo como PAGÓ</button>
     <button type="button" class="btn btn-ghost" id="popRevert" style="width:100%;margin-top:8px;display:none;">Revertir pagos</button>
+  </div>
+</div>
+
+<!-- POPOVER DETALLE -->
+<div class="pop-overlay" id="detOverlay">
+  <div class="pop" style="position:relative;">
+    <button type="button" id="detClose" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1;">×</button>
+    <h3>Detalle</h3>
+    <div class="sub" id="detContent" style="white-space:pre-wrap;margin-top:6px;"></div>
   </div>
 </div>
 </div><!-- /appRoot -->
@@ -656,7 +665,7 @@ function renderVentas(){
   document.getElementById('ventasCount').textContent = sorted.length ? `${sorted.length} registros` : '';
 
   if(!sorted.length){
-    body.innerHTML = `<tr><td colspan="20"><div class="empty-state"><div class="big">Todavía no hay ventas cargadas</div>Tocá el botón + para agregar la primera</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="21"><div class="empty-state"><div class="big">Todavía no hay ventas cargadas</div>Tocá el botón + para agregar la primera</div></td></tr>`;
     return;
   }
 
@@ -676,13 +685,14 @@ function renderVentas(){
       }
       const prodCells = `
         <td class="wrap">${esc(p.nombre)}</td>
+        <td class="center"><button type="button" class="edit-btn det-btn" data-id="${v.id}" title="Ver detalle">+</button></td>
         <td class="center">${p.cant??''}</td>
-        <td class="money val-col">${p.valor?fmt(p.valor):''}</td>`;
+        <td class="money val-col">${p.valor?(p.moneda==='USD'?fmtUsd(p.valor):fmt(p.valor)):''}</td>`;
       let payCells = '';
       if(i===0){
         payCells = `
           <td rowspan="${rows.length}" class="money total-bold val-col">${v.totalARS?fmt(v.totalARS):''}</td>
-          <td rowspan="${rows.length}" class="money val-col">${v.totalUSD?fmtUsd(v.totalUSD):''}</td>
+          <td rowspan="${rows.length}" class="money total-bold val-col">${v.totalUSD?fmtUsd(v.totalUSD):''}</td>
           <td rowspan="${rows.length}" class="money pay-col pay-start val-col">${v.paid['Efectivo']?fmt(v.paid['Efectivo']):''}</td>
           <td rowspan="${rows.length}" class="money pay-col val-col">${v.paid['Efvo usd']?fmtUsd(v.paid['Efvo usd']):''}</td>
           <td rowspan="${rows.length}" class="money pay-col val-col">${v.paid['Transf. BF']?fmt(v.paid['Transf. BF']):''}</td>
@@ -710,6 +720,16 @@ function renderVentas(){
   document.querySelectorAll('.fact-trigger').forEach(el=>{
     el.addEventListener('click', ()=> editFactura(el.dataset.id));
   });
+  document.querySelectorAll('.det-btn').forEach(el=>{
+    el.addEventListener('click', ()=> openDetPop(el.dataset.id));
+  });
+}
+
+function openDetPop(id){
+  const v = ventas.find(x=>x.id===id);
+  if(!v) return;
+  document.getElementById('detContent').textContent = v.detalle || 'Sin detalle cargado.';
+  document.getElementById('detOverlay').classList.add('active');
 }
 
 function factCellHtml(v){
@@ -740,6 +760,11 @@ function logLines(v, currency){
     return `${amt} (${fmtDateShort(p.fecha)})`;
   }).join('<br>');
 }
+function lastPaymentDate(v, currency){
+  const entries = (v.pagosDebe||[]).filter(p => currency==='USD' ? p.usd>0 : p.ars>0);
+  if(entries.length) return entries[entries.length-1].fecha;
+  return v.fechaPago || '';
+}
 
 function totalsRowsHtml(sorted){
   if(!sorted.length) return '';
@@ -751,13 +776,15 @@ function totalsRowsHtml(sorted){
     sumBF += v.paid['Transf. BF']||0; sumVF += v.paid['Transf. VF']||0; sumTarj += v.paid['Tarjeta']||0;
     sumDebeARS += v.debeARS||0; sumDebeUSD += v.debeUSD||0;
   });
-  const spacer = '<tr class="spacer-row"><td colspan="20">&nbsp;</td></tr>'.repeat(3);
+  const spacer = '<tr class="spacer-row"><td colspan="21">&nbsp;</td></tr>'.repeat(3);
   const totals = `<tr class="totals-row">
-    <td colspan="6" class="totals-label">TOTALES</td>
+    <td colspan="5"></td>
+    <td class="totals-label center">TOTALES</td>
+    <td></td>
     <td class="center">${sumCant||''}</td>
     <td class="val-col"></td>
     <td class="money total-bold val-col">${sumTotalARS?fmt(sumTotalARS):''}</td>
-    <td class="money val-col">${sumTotalUSD?fmtUsd(sumTotalUSD):''}</td>
+    <td class="money total-bold val-col">${sumTotalUSD?fmtUsd(sumTotalUSD):''}</td>
     <td class="money pay-col pay-start val-col">${sumEf?fmt(sumEf):''}</td>
     <td class="money pay-col val-col">${sumEfUsd?fmtUsd(sumEfUsd):''}</td>
     <td class="money pay-col val-col">${sumBF?fmt(sumBF):''}</td>
@@ -775,10 +802,11 @@ function debeCellHtml(v, currency){
   if(!(original>0)) return '';
   const remaining = currency==='USD' ? v.debeUSD : v.debeARS;
   const formatter = currency==='USD' ? fmtUsd : fmt;
-  const log = logLines(v, currency);
   if(remaining<=0){
-    return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${log?`<div class="debe-log">${log}</div>`:''}</div>`;
+    const d = lastPaymentDate(v, currency);
+    return `<div class="debe-cell paid" data-id="${v.id}">PAGÓ${d?`<div class="debe-log">${fmtDateShort(d)}</div>`:''}</div>`;
   }
+  const log = logLines(v, currency);
   return `<div class="debe-cell" data-id="${v.id}">${formatter(remaining)}${log?`<div class="debe-log">${log}</div>`:''}</div>`;
 }
 
@@ -811,6 +839,8 @@ function openDebePop(id){
   document.getElementById('popOverlay').classList.add('active');
 }
 document.getElementById('popCancel').addEventListener('click', ()=>document.getElementById('popOverlay').classList.remove('active'));
+document.getElementById('detClose').addEventListener('click', ()=>document.getElementById('detOverlay').classList.remove('active'));
+document.getElementById('detOverlay').addEventListener('click', e=>{ if(e.target.id==='detOverlay') e.currentTarget.classList.remove('active'); });
 document.getElementById('popOverlay').addEventListener('click', e=>{ if(e.target.id==='popOverlay') e.currentTarget.classList.remove('active'); });
 
 document.getElementById('popRegistrar').addEventListener('click', ()=>{
